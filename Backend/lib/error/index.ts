@@ -11,5 +11,6 @@
 
 import { AuthError, AuthErrorType } from './auth_error';
 import BaseError from './base_error';
+import { DatabaseError, DatabaseErrorType } from './database_error';
 
-export { BaseError, AuthError, AuthErrorType };
+export { BaseError, AuthError, AuthErrorType, DatabaseError, DatabaseErrorType };

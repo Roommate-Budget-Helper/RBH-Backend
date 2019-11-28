@@ -4,7 +4,6 @@ declare interface IUserInfo {
     email?: string;
     username?: string;
     nickname?: string;
-    create_time?: number;
 }
 
 declare interface IRegisterInfo {

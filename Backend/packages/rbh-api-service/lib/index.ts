@@ -7,17 +7,7 @@ export default class {
 
     public constructor(endpoint?: string) {
         this.client = HttpClient(endpoint);
-        this.client.headers['Time-Zone'] = Intl.DateTimeFormat().resolvedOptions().timeZone;
     }
-
-    // public setHeader = (headers: Record<string, string>) => {
-    //     Object.assign(this.client.headers, headers);
-    // };
-
-    // public set authInfo(authInfo: IAuthResponse) {
-    //     this.client.headers['User-Id'] = authInfo.userId;
-    //     this.client.headers['Id-Token'] = authInfo.accessToken;
-    // }
 
     public get auth() {
         return auth(this.client);

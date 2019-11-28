@@ -4,7 +4,6 @@ type HttpMethod = 'get' | 'post' | 'put' | 'delete';
 
 interface IApiHeaders {
     'User-Id'?: string;
-    'Id-Token'?: string;
     [header: string]: string | undefined;
 }
 
@@ -23,7 +22,6 @@ export class HttpClient {
         this.httpClient = Axios.create({
             baseURL: endpoint || 'http://localhost:9527',
             withCredentials: true
-            // validateStatus: (status) => (status >= 200 && status < 300) || (status === 500),
         });
     }
 
