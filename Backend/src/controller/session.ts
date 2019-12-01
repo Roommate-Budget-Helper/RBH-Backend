@@ -9,10 +9,9 @@ export const login: RequestHandler = async (req, res) => {
     // if (_.isEmpty(req)) {
     //     throw new AuthError(AuthErrorType.WrongPassword, 'xxx');
     // }
-
-    // Azure.auth.getUserInfo(req.query.username, req.query.password);
-
-    return res.send('login');
+    
+    const result = await Azure.auth.getUserInfo('huangj3', '123');
+    return res.send(`${result}`);
 };
 
 export const register: RequestHandler = async (req, res) => {

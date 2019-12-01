@@ -1,8 +1,7 @@
-import mysql from 'mysql';
-const pg = require('pg');
 import Bluebird from 'bluebird';
-import { Pool } from 'pg';
+// import { Pool } from 'pg';
 import { DatabaseError, DatabaseErrorType } from '../../error';
+import sql from 'mssql';
 
 // const config = {
 //     host: '<your-db-server-name>.postgres.database.azure.com',
@@ -13,14 +12,15 @@ import { DatabaseError, DatabaseErrorType } from '../../error';
 //     ssl: true
 // };
 
-export const client = new Pool({
-    // host: '<your-db-server-name>.postgres.database.azure.com',
-    // user: '<your-db-username>',
-    // password: '<your-password>',
-    // database: '<name-of-database>',
-    // port: 5432,
-    // ssl: true
-});
+export const client = {
+    user: 'rmbhadmin',
+    password: 'Jizhou*Huang',
+    database: 'Roommate',
+    server: 'rmbhdw1.database.windows.net',
+    options: {
+        encrypt: true  
+    } 
+};
 
 // const client = new pg.Client(config);
 
@@ -53,12 +53,11 @@ export const client = new Pool({
 //         });
 // }
 
-export async function runQuery<T>(pgPool: Pool, query: string): Bluebird<T> {
-    try {
-        const result = await pgPool.query(query);
-        console.info(result);
-        return result;
-    } catch (error) {
-        throw new DatabaseError(DatabaseErrorType.PostgresReadError, error.message);
-    }
+export async function runQuery<T>(query: string): Bluebird<T> {
+    
+        const result = await new sql.ConnectionPool(client).connect();
+        const queryResult = await result.query`${query}`;
+        console.info(queryResult);
+        return queryResult.recordset;
+   
 }
