@@ -1,4 +1,3 @@
 interface IAuthResponse {
-    userId: string;
-    username: string;
+    isRegistered: boolean;
 }

@@ -2,11 +2,6 @@ import Axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 type HttpMethod = 'get' | 'post' | 'put' | 'delete';
 
-interface IApiHeaders {
-    'User-Id'?: string;
-    [header: string]: string | undefined;
-}
-
 export class ApiClient {
     protected httpClient: HttpClient;
     public constructor(client: HttpClient) {
@@ -16,7 +11,7 @@ export class ApiClient {
 
 export class HttpClient {
     private httpClient: AxiosInstance;
-    public headers: IApiHeaders = {};
+    public headers = {};
 
     public constructor(endpoint?: string) {
         this.httpClient = Axios.create({
@@ -38,10 +33,6 @@ export class HttpClient {
             .request<R>({ method, url, data, headers: this.headers, ...config })
             .then((res) => res.data)
             .catch(this.throwError);
-    }
-
-    public requestHeader(url: string, config?: AxiosRequestConfig) {
-        return this.httpClient.request({ method: 'head', url, headers: this.headers, ...config }).catch(this.throwError);
     }
 }
 

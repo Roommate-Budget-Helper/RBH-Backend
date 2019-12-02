@@ -1,6 +1,6 @@
 import { runQuery } from './azure';
 
-//TODO
+//test
 export const getUserInfo = async (username: string, password: string): Promise<IUserInfo> => {
-    return (await runQuery('dbo.test1')) as any;
+    return runQuery('dbo.test1');
 };

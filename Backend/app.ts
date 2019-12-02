@@ -22,6 +22,6 @@ app.use('/api/session', Route.session);
 const port = 9527;
 const server = new http.Server(app);
 
-server.listen(`${port}`, function() {
+server.listen(`${port}`, () => {
     console.log(`App listening on port ${port}!`);
 });

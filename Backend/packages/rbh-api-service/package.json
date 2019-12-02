@@ -1,17 +1,17 @@
 {
     "name": "rbh-api-service",
-    "version": "1.0.4",
+    "version": "1.0.8",
     "types": "./index.d.ts",
     "directories": {
         "lib": "./lib"
     },
     "description": "api functions for rbh-backend system",
-    "main": "build/index.js",
+    "main": "dist/index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 0",
         "build": "tsc -d -p ./tsconfig.json"
     },
-    "author": "",
+    "author": "team-rbh",
     "license": "ISC",
     "dependencies": {
         "axios": "^0.19.0"
