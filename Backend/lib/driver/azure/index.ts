@@ -1,4 +1,4 @@
-import { client, runQuery } from './azure';
+import { runQuery } from './azure';
 import * as auth from './auth';
 
-export { client, runQuery, auth };
+export { runQuery, auth };
