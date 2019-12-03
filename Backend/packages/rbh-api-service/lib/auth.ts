@@ -2,7 +2,7 @@ import { ApiClient, HttpClient } from './http_client';
 
 export class SessionApi extends ApiClient {
     public login = async (username: string, password: string) => {
-        this.httpClient.request<IAuthResponse>('get', `/api/session?username=${username}&password=${password}`);
+        this.httpClient.request<IUserInfo>('get', `/api/session?username=${username}&password=${password}`);
     };
 
     public register = async (registerInfo: IRegisterInfo) => {
