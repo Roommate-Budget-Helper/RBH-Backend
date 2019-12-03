@@ -1,9 +1,13 @@
 declare interface IUserInfo {
-    user_id: string;
-    password?: string;
-    email?: string;
-    username?: string;
-    nickname?: string;
+    id: number,
+    full_name: string,
+    balance: 0,
+    userName: string,
+    hashedPassword: string,
+    created_at?: number,
+    created_by?: number,
+    updated_at?: number,
+    updated_by?: number
 }
 
 declare interface IRegisterInfo {

@@ -13,6 +13,6 @@ export const client = {
 
 export async function runQuery<T>(query: string): Bluebird<T> {
     const result = await new sql.ConnectionPool(client).connect();
-    const queryResult = await result.query`${query}`;
+    const queryResult = await result.query(`${query}`);
     return queryResult.recordset as any;
 }
