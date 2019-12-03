@@ -11,3 +11,5 @@
 /tmp
 /out-tsc
 /build
+package-lock.json
+package.json
