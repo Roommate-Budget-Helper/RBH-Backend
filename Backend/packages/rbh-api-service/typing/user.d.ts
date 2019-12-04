@@ -7,12 +7,7 @@ declare interface IUserInfo {
     created_at?: number,
     created_by?: number,
     updated_at?: number,
-    updated_by?: number
+    updated_by?: number,
+    email?:string
 }
 
-declare interface IRegisterInfo {
-    username: string;
-    nickname?: string;
-    email?: string;
-    password: string;
-}

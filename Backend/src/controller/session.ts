@@ -9,7 +9,8 @@ export const login: RequestHandler = async (req, res) => {
 };
 
 export const register: RequestHandler = async (req, res) => {
-    return res.send('register');
+    const result = await Azure.auth.insertUserInfo(`${req.query.username}`, `${req.query.password}`,`${req.query.email}`);
+    return res.send(result);
 };
 
 export const logout: RequestHandler = async (req, res) => {
