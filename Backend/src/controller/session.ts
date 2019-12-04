@@ -4,6 +4,7 @@ import * as Azure from '../../lib/driver/azure/index';
 
 export const login: RequestHandler = async (req, res) => {
     const result = await Azure.auth.getUserInfo(`${req.query.username}`, `${req.query.password}`);
+    
     return res.send(result);
 };
 
