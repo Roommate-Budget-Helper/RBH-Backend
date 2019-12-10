@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "pretty": false,
+        "target": "es5",
+        "module": "commonjs",
+        "lib": ["esnext", "dom"],
+        "skipLibCheck": true,
+        "strict": true,
+        "moduleResolution": "node",
+        "downlevelIteration": true,
+        "sourceMap": true,
+        "outDir": "./dist",
+        "baseUrl": ".",
+        "typeRoots": ["node_modules/@types", "typing"]
+    },
+    "include": ["./lib", "./typing", "./index.d.ts", "../../typing/express.d.ts"]
+}
