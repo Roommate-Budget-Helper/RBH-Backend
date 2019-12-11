@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { RequestHandler } from 'express';
 import * as Azure from '../../lib/driver/azure/index';
-import uuid from 'uuid/v4';
+import * as jwt from 'jsonwebtoken';
 
 export const login: RequestHandler = async (req, res) => {
     const loginInfo : IUserInfo = await Azure.auth.getUserInfo(`${req.query.username}`, `${req.query.password}`);
-    const temp = uuid();
+    const temp = jwt.sign({username: req.query.username},'abcde', {expiresIn: 20 * 60});
     const result = {userInfo: loginInfo, token: temp} as ILoginResponse;
     return res.send(result);
 };
