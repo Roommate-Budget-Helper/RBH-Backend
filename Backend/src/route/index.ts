@@ -1,4 +1,4 @@
 import session from './session';
-import homes from './homes'
+import homes from './homes';
 
-export { session,homes };
+export { session, homes };
