@@ -32,3 +32,25 @@ export const getInvitationInfo = async (userId: number): Promise<IInvitation[]> 
     where id = ${userId}
     `);
 };
+
+export const acceptInvitation = async (id: number): Promise<Boolean> => {
+    return runQueryGetOne(`
+    declare @tempuserId int;
+    declare @temphouseId int;
+    select 
+    @tempuserId = dbo.invitations.userId, @temphouseId = dbo.invitations.houseId
+    from dbo.invitations
+    where id = ${id};
+
+    delete from dbo.invitations where id = ${id};
+
+    insert into dbo.User2Houses(HouseId,userId)Values(@temphouseId,@tempuserId)	
+    `);
+};
+
+export const declineInvitation = async (id: number): Promise<Boolean> => {
+    return runQueryGetOne(`
+    delete from dbo.invitations where id = ${id};
+    `);
+};
+

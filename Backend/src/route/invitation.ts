@@ -6,7 +6,8 @@ import { asyncMiddleware } from '../../lib/middleware/async';
 const router = express.Router();
 
 router.get('/', asyncMiddleware(controller.getInvitation));
-router.post('/', asyncMiddleware(controller.creatInvitation));
-// router.delete('/', asyncMiddleware(controller.logout));
+router.post('/', asyncMiddleware(controller.createInvitation));
+router.delete('/accept/', asyncMiddleware(controller.acceptInvitation));
+router.delete('/decline/', asyncMiddleware(controller.declineInvitation));
 
 export default router;

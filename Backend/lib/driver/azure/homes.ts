@@ -21,7 +21,7 @@ export const insertHomeInfo = async (fullname: string, adminname: string, admini
 };
 
 export const getHomeInfo = async (userId: number): Promise<IUser2Home[]> => {
-    return runQueryGetOne(`select dbo.houses.full_name,dbo.houses.admin_name,dbo.houses.admin_id
+    return runQueryGetOne(`select distinct dbo.houses.full_name,dbo.houses.admin_name,dbo.houses.admin_id
     from dbo.User2Houses
     inner join dbo.houses
     on dbo.houses.id = dbo.User2Houses.HouseId
