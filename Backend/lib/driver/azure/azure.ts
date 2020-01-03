@@ -7,7 +7,7 @@ export const client = {
     database: 'Roommate',
     server: 'rmbhdw1.database.windows.net',
     options: {
-        encrypt: true
+        encrypt: true,
     }
 };
 

@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/', asyncMiddleware(controller.getInvitation));
 router.post('/', asyncMiddleware(controller.createInvitation));
-router.delete('/accept/', asyncMiddleware(controller.acceptInvitation));
-router.delete('/decline/', asyncMiddleware(controller.declineInvitation));
+router.delete('/accept', asyncMiddleware(controller.acceptInvitation));
+router.delete('/decline', asyncMiddleware(controller.declineInvitation));
 
 export default router;

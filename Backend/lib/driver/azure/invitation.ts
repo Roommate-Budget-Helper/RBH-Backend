@@ -45,12 +45,19 @@ export const acceptInvitation = async (id: number): Promise<Boolean> => {
     delete from dbo.invitations where id = ${id};
 
     insert into dbo.User2Houses(HouseId,userId)Values(@temphouseId,@tempuserId)	
-    `);
+    `).then(() => {
+        return true;
+    }).catch(() => {
+        return false;
+    });
 };
 
 export const declineInvitation = async (id: number): Promise<Boolean> => {
     return runQueryGetOne(`
     delete from dbo.invitations where id = ${id};
-    `);
+    `).then(() => {
+        return true;
+    }).catch(() =>{
+        return false;
+    });
 };
-
