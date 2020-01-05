@@ -10,3 +10,8 @@ export const getHome: RequestHandler = async (req, res) => {
     const result = await Azure.homes.getHomeInfo(req.query.userId);
     return res.send(result);
 };
+
+export const getHomeDetail: RequestHandler = async (req, res) => {
+    const result = await Azure.homes.getHomeDetail(req.query.houseId);
+    return res.send(result);
+};

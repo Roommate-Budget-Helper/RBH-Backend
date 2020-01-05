@@ -27,3 +27,11 @@ export const getHomeInfo = async (userId: number): Promise<IUser2Home[]> => {
     on dbo.houses.id = dbo.User2Houses.HouseId
     where userId = \'${userId}\'`);
 };
+
+export const getHomeDetail = async (houseId: number): Promise<string[]> => {
+    return runQueryGetOne(`select distinct dbo.users.userName
+    from dbo.User2Houses
+    inner join dbo.users
+    on dbo.User2Houses.userId = dbo.users.id
+    where HouseId = ${houseId}`);
+};
