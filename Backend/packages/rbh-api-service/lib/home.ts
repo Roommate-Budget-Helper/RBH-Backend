@@ -6,7 +6,7 @@ export class HomeApi extends ApiClient {
 
     public getHome = async (userId: number) => this.httpClient.request<IUser2Home[]>('get', `/api/home?userId=${userId}`);
 
-    public getHomeDetail = async (houseId: number) => this.httpClient.request<string[]>('get',`/api/home/detail?houseId=${houseId}`)
+    public getHomeDetail = async (houseId: number) => this.httpClient.request<IUserInfo[]>('get',`/api/home/detail?houseId=${houseId}`)
 }
 
 export default (client: HttpClient) => new HomeApi(client);
