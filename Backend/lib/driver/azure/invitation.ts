@@ -6,16 +6,16 @@ export const insertInvitationInfo = async (username: string, houseId: number): P
     return runQueryGetOne(
         `declare @tempUserName nvarchar(255);
         declare @tempHouseName nvarchar(255);
-        
-        select @tempUserName = dbo.users.full_name
-        from dbo.users
-        where users.id = ${userId}
-        
+        declare @userId int;
+		select @userId = dbo.users.id
+		from dbo.users
+		where users.userName = \'${username}\'
+
         select @tempHouseName = dbo.houses.full_name
         from dbo.houses
         where houses.id = ${houseId}
         
-        insert into dbo.invitations(userName, houseName, userId, houseId) VALUES (@tempUserName,@tempHouseName,${userId},${houseId});`
+        insert into dbo.invitations(userName, houseName, userId, houseId) VALUES (\'${username}\',@tempHouseName,@userId,${houseId})`
     )
         .then(() => {
             return true;
