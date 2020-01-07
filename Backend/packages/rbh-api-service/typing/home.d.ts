@@ -9,7 +9,10 @@ declare interface IHomeInfo {
 }
 
 declare interface IUser2Home {
+    id:number;
     full_name: string;
     admin_name: string;
     admin_id: Number;
+    house_id: number;
+    roommates:string;
 }

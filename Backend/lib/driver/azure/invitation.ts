@@ -2,7 +2,7 @@ import { runQuery, runQueryGetOne } from './azure';
 import * as _ from 'lodash';
 import { promises } from 'dns';
 
-export const insertInvitationInfo = async (userId: number, houseId: number): Promise<Boolean> => {
+export const insertInvitationInfo = async (username: string, houseId: number): Promise<Boolean> => {
     return runQueryGetOne(
         `declare @tempUserName nvarchar(255);
         declare @tempHouseName nvarchar(255);
