@@ -1,6 +1,6 @@
 {
     "name": "rbh-api-service",
-    "version": "1.2.1",
+    "version": "1.2.7",
     "types": "./index.d.ts",
     "directories": {
         "lib": "./lib"
