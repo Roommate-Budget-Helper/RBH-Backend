@@ -1,6 +1,8 @@
 import HttpClient from './http_client';
 import auth from './auth';
 import user from './user';
+import home from './home';
+import invitation from './invitation';
 
 export default class {
     private client: ReturnType<typeof HttpClient>;
@@ -14,5 +16,11 @@ export default class {
     }
     public get user() {
         return user(this.client);
+    }
+    public get home() {
+        return home(this.client);
+    }
+    public get invitation() {
+        return invitation(this.client);
     }
 }
