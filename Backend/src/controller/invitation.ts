@@ -12,11 +12,11 @@ export const getInvitation: RequestHandler = async (req, res) => {
 };
 
 export const acceptInvitation: RequestHandler = async (req, res) => {
-    const result = await Azure.invitation.acceptInvitation(req.query.invitationId);
+    const result = await Azure.invitation.acceptInvitation(req.query.id);
     return res.send(result);
 };
 
 export const declineInvitation: RequestHandler = async (req, res) => {
-    const result = await Azure.invitation.declineInvitation(req.query.invitationId);
+    const result = await Azure.invitation.declineInvitation(req.query.id);
     return res.send(result);
 };
