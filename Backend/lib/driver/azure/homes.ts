@@ -16,7 +16,7 @@ export const insertHomeInfo = async (fullname: string, adminname: string, admini
     );
 };
 
-export const getHomeInfo = async (userId: number): Promise<IUser2Home[]> => {
+export const getHomeInfo = async (userId: numId): Promise<IUser2Home[]> => {
     return runQueryGetOne(`declare @Max as int
     declare @Current as int
     declare @tempHouseId as int
@@ -100,7 +100,7 @@ export const getHomeInfo = async (userId: number): Promise<IUser2Home[]> => {
       select * from #temp_HouseInfo_Users`);
 };
 
-export const getHomeDetail = async (houseId: number): Promise<IUserInfo[]> => {
+export const getHomeDetail = async (houseId: numId): Promise<IUserInfo[]> => {
     return runQueryGetOne(`select dbo.users.*
     from dbo.User2Houses
     inner join dbo.users
@@ -108,10 +108,10 @@ export const getHomeDetail = async (houseId: number): Promise<IUserInfo[]> => {
     where HouseId = ${houseId}`);
 };
 
-export const removeRoommate = async (userName: string, houseId:number): Promise<Boolean> =>{
+export const removeRoommate = async (userName: string, houseId: numId): Promise<Boolean> => {
     // return runQueryGetOne(`select * from dbo.User2Houses`)
     return runQueryGetOne(`DELETE dbo.User2Houses FROM dbo.User2Houses 
     inner join dbo.users 
     on dbo.User2Houses.userId=dbo.users.id
-    WHERE dbo.users.userName=\'${userName}\' and dbo.User2Houses.HouseId=${houseId}`)
-}
+    WHERE dbo.users.userName=\'${userName}\' and dbo.User2Houses.HouseId=${houseId}`);
+};
