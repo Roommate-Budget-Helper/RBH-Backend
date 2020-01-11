@@ -2,7 +2,7 @@ import { runQuery, runQueryGetOne } from './azure';
 import * as _ from 'lodash';
 import { promises } from 'dns';
 
-export const insertHomeInfo = async (fullname: string, adminname: string, adminid: Number): Promise<Number> => {
+export const insertHomeInfo = async (fullname: string, adminname: string, adminid: id): Promise<id> => {
     return runQueryGetOne(
         `INSERT INTO dbo.houses(full_name, admin_name, admin_id) VALUES (\'${fullname}\', \'${fullname}\', \'${adminid}\');
         declare @tempHouseId int;

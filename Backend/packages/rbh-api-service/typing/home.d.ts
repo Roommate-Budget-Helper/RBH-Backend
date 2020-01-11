@@ -1,18 +1,18 @@
 declare interface IHomeInfo {
     full_name: string;
     admin_name: string;
-    admin_id: Number;
+    admin_id: id;
     created_at: Date;
     created_by: string;
-    updated_at: Number;
+    updated_at: number;
     updated_by: string;
 }
 
 declare interface IUser2Home {
-    id:Number;
+    id: id;
     full_name: string;
     admin_name: string;
-    admin_id: Number;
-    house_id: Number;
-    roommates:string;
+    admin_id: id;
+    house_id: id;
+    roommates: string;
 }
