@@ -2,8 +2,9 @@ import { RequestHandler } from 'express';
 import * as Azure from '../../lib/driver/azure/index';
 
 export const createHome: RequestHandler = async (req, res) => {
-    const result = await Azure.homes.insertHomeInfo(req.query.fullname, req.query.adminname, req.query.adminid);
-
+    const result: stringId = await Azure.homes.insertHomeInfo(req.query.fullname, req.query.adminname, req.query.adminid).then((result) => {
+        return result['id'].toString() as stringId;
+    });
     return res.send(result);
 };
 

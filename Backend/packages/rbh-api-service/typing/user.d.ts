@@ -1,5 +1,5 @@
 declare interface IUserInfo {
-    id: id;
+    id: numId;
     full_name: string;
     balance: 0;
     userName: string;

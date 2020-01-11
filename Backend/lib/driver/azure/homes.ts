@@ -2,8 +2,8 @@ import { runQuery, runQueryGetOne } from './azure';
 import * as _ from 'lodash';
 import { promises } from 'dns';
 
-export const insertHomeInfo = async (fullname: string, adminname: string, adminid: id): Promise<id> => {
-    return runQueryGetOne(
+export const insertHomeInfo = async (fullname: string, adminname: string, adminid: numId): Promise<Record<string, numId>> => {
+    return runQuery(
         `INSERT INTO dbo.houses(full_name, admin_name, admin_id) VALUES (\'${fullname}\', \'${fullname}\', \'${adminid}\');
         declare @tempHouseId int;
         select @tempHouseId = MAX(dbo.houses.id)
@@ -11,7 +11,7 @@ export const insertHomeInfo = async (fullname: string, adminname: string, admini
         where full_name = \'${fullname}\' and admin_name = \'${fullname}\' and admin_id = \'${adminid}\'
 
         INSERT INTO dbo.User2Houses(HouseId,userId) VALUES (@tempHouseId, \'${adminid}\');
-        SELECT MAX(dbo.houses.id) FROM dbo.houses;
+        SELECT id FROM dbo.houses where id= (SELECT max(id) FROM dbo.houses);
         `
     );
 };
@@ -41,7 +41,6 @@ export const getHomeInfo = async (userId: number): Promise<IUser2Home[]> => {
         
         dbo.User2Houses.userId = ${userId}
         
-    
     
     
     

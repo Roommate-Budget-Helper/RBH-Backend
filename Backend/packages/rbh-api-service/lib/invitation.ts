@@ -1,15 +1,15 @@
 import { ApiClient, HttpClient } from './http_client';
 
 export class InvitationApi extends ApiClient {
-    public createInvitation = async (userName: string, houseId: id) =>
+    public createInvitation = async (userName: string, houseId: numId) =>
         this.httpClient.request<boolean>('post', `/api/invitation?userName=${userName}&houseId=${houseId}`);
 
-    public getInvitation = async (userId: id) => this.httpClient.request<IInvitation[]>('get', `/api/invitation?userId=${userId}`);
+    public getInvitation = async (userId: numId) => this.httpClient.request<IInvitation[]>('get', `/api/invitation?userId=${userId}`);
 
-    public acceptInvitation = async (invitationId: id) =>
+    public acceptInvitation = async (invitationId: numId) =>
         this.httpClient.request<Boolean>('delete', `/api/invitation/accept?id=${invitationId}`);
 
-    public declineInvitation = async (invitationId: id) =>
+    public declineInvitation = async (invitationId: numId) =>
         this.httpClient.request<Boolean>('delete', `/api/invitation/decline?id=${invitationId}`);
 }
 
