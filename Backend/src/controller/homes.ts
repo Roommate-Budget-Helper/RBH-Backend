@@ -17,3 +17,8 @@ export const getHomeDetail: RequestHandler = async (req, res) => {
     const result = await Azure.homes.getHomeDetail(req.query.houseId);
     return res.send(result);
 };
+
+export const removeRoommate: RequestHandler = async (req, res) => {
+    const result = await Azure.homes.removeRoommate(req.query.userName, req.query.houseId);
+    return res.send(result);
+};
