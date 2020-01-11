@@ -2,8 +2,8 @@ import { runQuery, runQueryGetOne } from './azure';
 import * as _ from 'lodash';
 import { promises } from 'dns';
 
-export const insertHomeInfo = async (fullname: string, adminname: string, adminid: Number): Promise<number> => {
-    return runQueryGetOne(
+export const insertHomeInfo = async (fullname: string, adminname: string, adminid: numId): Promise<Record<string, numId>> => {
+    return runQuery(
         `INSERT INTO dbo.houses(full_name, admin_name, admin_id) VALUES (\'${fullname}\', \'${fullname}\', \'${adminid}\');
         declare @tempHouseId int;
         select @tempHouseId = MAX(dbo.houses.id)
@@ -11,12 +11,12 @@ export const insertHomeInfo = async (fullname: string, adminname: string, admini
         where full_name = \'${fullname}\' and admin_name = \'${fullname}\' and admin_id = \'${adminid}\'
 
         INSERT INTO dbo.User2Houses(HouseId,userId) VALUES (@tempHouseId, \'${adminid}\');
-        SELECT MAX(dbo.houses.id) FROM dbo.houses;
+        SELECT id FROM dbo.houses where id= (SELECT max(id) FROM dbo.houses);
         `
     );
 };
 
-export const getHomeInfo = async (userId: number): Promise<IUser2Home[]> => {
+export const getHomeInfo = async (userId: numId): Promise<IUser2Home[]> => {
     return runQueryGetOne(`declare @Max as int
     declare @Current as int
     declare @tempHouseId as int
@@ -41,7 +41,6 @@ export const getHomeInfo = async (userId: number): Promise<IUser2Home[]> => {
         
         dbo.User2Houses.userId = ${userId}
         
-    
     
     
     
@@ -101,10 +100,18 @@ export const getHomeInfo = async (userId: number): Promise<IUser2Home[]> => {
       select * from #temp_HouseInfo_Users`);
 };
 
-export const getHomeDetail = async (houseId: number): Promise<IUserInfo[]> => {
+export const getHomeDetail = async (houseId: numId): Promise<IUserInfo[]> => {
     return runQueryGetOne(`select dbo.users.*
     from dbo.User2Houses
     inner join dbo.users
     on dbo.User2Houses.userId = dbo.users.id
     where HouseId = ${houseId}`);
+};
+
+export const removeRoommate = async (userName: string, houseId: numId): Promise<Boolean> => {
+    // return runQueryGetOne(`select * from dbo.User2Houses`)
+    return runQueryGetOne(`DELETE dbo.User2Houses FROM dbo.User2Houses 
+    inner join dbo.users 
+    on dbo.User2Houses.userId=dbo.users.id
+    WHERE dbo.users.userName=\'${userName}\' and dbo.User2Houses.HouseId=${houseId}`);
 };

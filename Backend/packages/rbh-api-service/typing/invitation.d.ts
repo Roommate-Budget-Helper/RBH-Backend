@@ -1,12 +1,11 @@
 declare interface IInvitation {
-    id: Number;
+    id: numId;
     userName: string;
     houseName: string;
-    userId: Number;
+    userId: numId;
     houseId: number;
     created_at: Date;
     created_by: string;
-    updated_at: Number;
+    updated_at: numId;
     updated_by: string;
 }
-
