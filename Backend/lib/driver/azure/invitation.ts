@@ -29,7 +29,7 @@ export const getInvitationInfo = async (userId: number): Promise<IInvitation[]> 
     return runQueryGetOne(`
     select *
     from dbo.invitations
-    where id = ${userId}
+    where userId = ${userId}
     `);
 };
 
