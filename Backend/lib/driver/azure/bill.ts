@@ -8,17 +8,8 @@ export const getBillByHome = async (homeId: numId): Promise<IBill[]> => {
     );
 };
 
-export const createBill = async (ownerId: numId, homeId: numId, plannedSharedFlag: number, sharePlanid: number, totalAmount: number): Promise<boolean> => {
-    return runQueryGetOne(`INSERT INTO dbo.bills(ownerId, homeId, internalFlag,plannedSharedFlag,
-        sharePlanid,proportion,totalAmount) VALUES (\'${ownerId}\', \'${homeId}\', \'${internalFlag}\', \'${plannedSharedFlag}\', 
-        \'${sharePlanid}\', \'${proportion}\', \'${totalAmount}\');
-    declare @tempHouseId int;
-    select @tempHouseId = MAX(dbo.houses.id)
-    from dbo.houses
-    where full_name = \'${fullname}\' and admin_name = \'${fullname}\' and admin_id = \'${adminid}\'
-
-    INSERT INTO dbo.User2Houses(HouseId,userId) VALUES (@tempHouseId, \'${adminid}\');
-    SELECT id FROM dbo.houses where id= (SELECT max(id) FROM dbo.houses);`);
+export const createBill = async (ownerId: numId, homeId: numId, plannedSharedFlag: number, sharePlanid: number, totalAmount: number, roommates: string[]): Promise<boolean> => {
+    return runQueryGetOne('');
 };
 
 export const getBillByUser = async (userId: numId): Promise<IBill[]> => {

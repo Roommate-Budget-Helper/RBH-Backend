@@ -3,7 +3,7 @@ import * as Azure from '../../lib/driver/azure/index';
 
 
 export const createBill: RequestHandler = async (req, res) => {
-    const result: boolean = await Azure.bill.createBill(req.query.ownerId, req.query.homeId, req.query.plannedSharedFlag, req.query.sharePlanid, req.query.totalAmount);
+    const result: boolean = await Azure.bill.createBill(req.query.ownerId, req.query.homeId, req.query.plannedSharedFlag, req.query.sharePlanid, req.query.totalAmount, req.body.roommates);
     return res.send(result);
 };
 
