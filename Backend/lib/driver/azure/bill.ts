@@ -4,14 +4,11 @@ import { promises } from 'dns';
 
 export const getBillByHome = async (homeId: numId): Promise<IBill[]> => {
     return runQuery(
-        `
-        `
+        `select * from dbo.bills where homeId = ${homeId}`
     );
 };
 
-
-export const createBill = async (ownerId: numId, homeId:numId, internalFlag: number,plannedSharedFlag: number,
-    sharePlanid: number,proportion: number,totalAmount: number): Promise<Boolean> => {
+export const createBill = async (ownerId: numId, homeId: numId, plannedSharedFlag: number, sharePlanid: number, totalAmount: number): Promise<boolean> => {
     return runQueryGetOne(`INSERT INTO dbo.bills(ownerId, homeId, internalFlag,plannedSharedFlag,
         sharePlanid,proportion,totalAmount) VALUES (\'${ownerId}\', \'${homeId}\', \'${internalFlag}\', \'${plannedSharedFlag}\', 
         \'${sharePlanid}\', \'${proportion}\', \'${totalAmount}\');
@@ -25,6 +22,10 @@ export const createBill = async (ownerId: numId, homeId:numId, internalFlag: num
 };
 
 export const getBillByUser = async (userId: numId): Promise<IBill[]> => {
-    return runQueryGetOne(``);
+    return runQueryGetOne(`select dbo.bills.*
+    from dbo.bills 
+    inner join dbo.users2bills 
+    on dbo.bills.id = dbo.users2bills.billId 
+    where dbo.users2bills.userId = ${userId}`);
 };
 
