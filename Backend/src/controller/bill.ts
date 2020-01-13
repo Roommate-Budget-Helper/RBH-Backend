@@ -8,7 +8,9 @@ export const createBill: RequestHandler = async (req, res) => {
         req.query.plannedSharedFlag,
         req.query.sharePlanid,
         req.query.totalAmount,
-        req.body.roommates
+        req.body.roommates,
+        req.body.amount,
+        req.body.proportion
     );
 
     return res.send(result);
