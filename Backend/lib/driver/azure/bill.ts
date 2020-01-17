@@ -18,6 +18,7 @@ export const createBill = async (ownerId: numId, homeId: numId, plannedSharedFla
         runQuery(`INSERT INTO dbo.users2bills (billId, userId, proportion, amount, proofFlag, isApproved, proof)
         VALUES (${billId}, ${userId}, ${proportion[i]}, ${amount[i]}, 0, 0, 0)`)
       }
+    runQuery(`INSERT INTO dbo.sharePlan ()`)
     return true;
 };
 
@@ -28,4 +29,16 @@ export const getBillByUser = async (userId: numId): Promise<IBill[]> => {
     on dbo.bills.id = dbo.users2bills.billId 
     where dbo.users2bills.userId = ${userId}`);
 };
+
+export const deleteBill = async (billid: numId): Promise<Boolean> => {
+    return runQuery(`DELETE FROM dbo.bills WHERE id = ${billid}`)
+}
+
+export const markAsResolved = async (billid: numId): Promise<Boolean> => {
+    return runQuery(`UPDATE dbo.bills
+        SET isResolved = 1
+        WHERE id = ${billid}`)
+}
+
+
 

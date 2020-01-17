@@ -25,3 +25,13 @@ export const getBillByUser: RequestHandler = async (req, res) => {
     const result: IBill[] = await Azure.bill.getBillByUser(req.query.userId);
     return res.send(result);
 };
+
+export const deleteBill: RequestHandler = async (req, res) => {
+    const result: Boolean = await Azure.bill.deleteBill(req.query.billid);
+    return res.send(result);
+};
+
+export const markAsResolved: RequestHandler = async (req, res) => {
+    const result: Boolean = await Azure.bill.markAsResolved(req.query.billid);
+    return res.send(result);
+};
