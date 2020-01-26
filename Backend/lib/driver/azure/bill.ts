@@ -18,10 +18,14 @@ export const createBill = async (ownerId: numId, homeId: numId, plannedSharedFla
         if(sharePlanid==-1){
             planId = runQuery(`INSERT INTO dbo.sharePlans (full_name, HouseId) VALUES(\'${full_name}\', ${homeId})
             SELECT id FROM dbo.sharePlans where id= (SELECT max(id) FROM dbo.sharePlans`)
-        }
-        billId = runQueryGetOne(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved)
+            billId = runQueryGetOne(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved)
         VALUES (${ownerId},${homeId},${plannedSharedFlag},${planId},${totalAmount},0)
         SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills`)
+        }else{
+            billId = runQueryGetOne(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved)
+        VALUES (${ownerId},${homeId},${plannedSharedFlag},${sharePlanid},${totalAmount},0)
+        SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills`)
+        }
     }
     console.info(billId, planId)
     for (let i = 0; i < roommates.length; i++) {
