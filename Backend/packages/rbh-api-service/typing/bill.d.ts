@@ -25,6 +25,8 @@ declare interface IUser2Bill {
     created_by: string;
     updated_at: Date;
     updated_by: string;
+    billName: string;
+    descri: string;
 }
 declare interface IBillSharePlanReturnValue{
     id:numId;
@@ -51,8 +53,10 @@ declare interface IBillCreateInfo {
     roommates: string[];
     amount: number[];
     proportion: number[];
+    billName: string;
+    descri: string;
 }
 
 declare interface IBillCreateResponse{
-    id:numId
+    id: numId;
 }
