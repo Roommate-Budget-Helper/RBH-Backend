@@ -57,6 +57,8 @@ declare interface IBillCreateInfo {
     proportion: number[];
     billName: string;
     descri: string;
+    created_at:string;
+    created_by:string;
 }
 
 declare interface IBillCreateResponse{
