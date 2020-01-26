@@ -12,7 +12,7 @@ export class BillApi extends ApiClient {
 
     public markAsResolved = async (billid:numId) => this.httpClient.request<Boolean>('put', `/api/bill?billid = ${billid}`)
 
-    public getSharePlans = async (houseId:numId) => this.httpClient.request<IBillSharePlan[]>('get',`/api/bill/shareplan?userId=${houseId}`)
+    public getSharePlans = async (houseId:numId) => this.httpClient.request<IBillSharePlan[]>('get',`/api/bill/shareplan?houseId=${houseId}`)
 }
 
 export default (client: HttpClient) => new BillApi(client);
