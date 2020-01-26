@@ -32,6 +32,7 @@ declare interface IBillCreateInfo {
     homeId: numId;
     plannedSharedFlag: number;
     sharePlanid: number;
+    full_name:string;
     totalAmount: number;
     roommates: string[];
     amount: number[];

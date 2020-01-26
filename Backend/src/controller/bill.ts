@@ -7,6 +7,7 @@ export const createBill: RequestHandler = async (req, res) => {
         req.body.homeId,
         req.body.plannedSharedFlag,
         req.body.sharePlanid,
+        req.body.full_name,
         req.body.totalAmount,
         req.body.roommates,
         req.body.amount,

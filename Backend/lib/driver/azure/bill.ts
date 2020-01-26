@@ -8,17 +8,31 @@ export const getBillByHome = async (homeId: numId): Promise<IBill[]> => {
     );
 };
 
-export const createBill = async (ownerId: numId, homeId: numId, plannedSharedFlag: number, sharePlanid: number, totalAmount: number, roommates: string[], amount: number[], proportion: number[]): Promise<boolean> => {
-    let billId = runQueryGetOne(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved)
-    VALUES (${ownerId},${homeId},${plannedSharedFlag},${sharePlanid},${totalAmount},0)`)
-    console.info(billId)
+export const createBill = async (ownerId: numId, homeId: numId, plannedSharedFlag: number, sharePlanid: number, full_name: string, totalAmount: number, roommates: string[], amount: number[], proportion: number[]): Promise<boolean> => {
+    let billId
+    let planId
+    if(plannedSharedFlag==0){
+        billId = runQueryGetOne(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, totalAmount, isResolved)
+        VALUES (${ownerId},${homeId},${plannedSharedFlag},${totalAmount},0)`)
+    }else{
+        if(sharePlanid==-1){
+            planId = runQuery(`INSERT INTO dbo.sharePlans (full_name) VALUES(\'${full_name}\')
+            SELECT id FROM dbo.sharePlans where id= (SELECT max(id) FROM dbo.sharePlans`)
+        }
+        billId = runQueryGetOne(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved)
+        VALUES (${ownerId},${homeId},${plannedSharedFlag},${planId},${totalAmount},0)
+        SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills`)
+    }
+    console.info(billId, planId)
     for (let i = 0; i < roommates.length; i++) {
-        let userId = runQueryGetOne(`SELECT userName FROM dbo.users WHERE userName = ${roommates[i]}`)
+        let userId = runQuery(`SELECT id FROM dbo.users WHERE userName = ${roommates[i]}`)
         console.info(userId)
         runQuery(`INSERT INTO dbo.users2bills (billId, userId, proportion, amount, proofFlag, isApproved, proof)
         VALUES (${billId}, ${userId}, ${proportion[i]}, ${amount[i]}, 0, 0, 0)`)
+        if(sharePlanid==-1){
+        runQuery(`INSERT INTO dbo.shareRatioId (sharePlansid, userName, ratio) VALUES (${planId}, ${roommates[i]}, ${proportion[i]})`)
+        }
       }
-    runQuery(`INSERT INTO dbo.sharePlan ()`)
     return true;
 };
 

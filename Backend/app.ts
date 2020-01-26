@@ -7,7 +7,7 @@ import * as Route from './src/route';
 
 const app: express.Application = express();
 
-
+export const App = app;
 
 app.use(
     cors({
@@ -32,6 +32,3 @@ const server = new http.Server(app);
 server.listen(`${port}`, () => {
     console.log(`App listening on port ${port}!`);
 });
-
-export const App = app;
-
