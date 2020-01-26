@@ -7,7 +7,7 @@
         "tsc": "tsc",
         "dev": "ts-node-dev --respawn --transpileOnly app.ts",
         "prod": "tsc && supervisor ./build/app.js",
-        "test": "mocha --require babel-register tests/*.ts --exitnpm"
+        "test": "mocha -r ts-node/register tests/*.ts"
     },
     "author": "",
     "license": "ISC",
@@ -37,10 +37,14 @@
         "uuid": "^3.4.0"
     },
     "devDependencies": {
+        "@types/chai": "^4.2.7",
         "@types/lodash": "^4.14.149",
+        "@types/mocha": "^5.2.7",
         "babel-cli": "^6.26.0",
         "babel-preset-env": "^1.7.0",
         "chai": "^4.2.0",
-        "mocha": "^5.2.0"
+        "mocha": "^5.2.0",
+        "ts-node": "^8.6.2",
+        "typings": "^2.1.1"
     }
 }

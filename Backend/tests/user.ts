@@ -1,10 +1,10 @@
 import chai from 'chai'
 import chaiHttp from 'chai-http'
 import {App} from "../app"
-
+// var app = require('../app');
 chai.use(chaiHttp);
 chai.should();
-
+// global.
 var assert = require('assert');
 describe('Array', function() {
   describe('#indexOf()', function() {
