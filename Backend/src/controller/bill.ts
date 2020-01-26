@@ -36,3 +36,8 @@ export const markAsResolved: RequestHandler = async (req, res) => {
     const result: Boolean = await Azure.bill.markAsResolved(req.query.billid);
     return res.send(result);
 };
+
+export const getSharePlans: RequestHandler = async (req, res) => {
+    const result: IBillSharePlan[] = await Azure.bill.getSharePlans(req.query.houseId);
+    return res.send(result);
+};

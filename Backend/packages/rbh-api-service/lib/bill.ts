@@ -11,6 +11,8 @@ export class BillApi extends ApiClient {
     public deleteBill = async (billid:numId) => this.httpClient.request<Boolean>('delete', `/api/bill?billid=${billid}`)
 
     public markAsResolved = async (billid:numId) => this.httpClient.request<Boolean>('put', `/api/bill?billid = ${billid}`)
+
+    public getSharePlans = async (houseId:numId) => this.httpClient.request<IBillSharePlan[]>('get',`/api/bill/shareplan?userId=${houseId}`)
 }
 
 export default (client: HttpClient) => new BillApi(client);
