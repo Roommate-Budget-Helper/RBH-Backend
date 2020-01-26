@@ -1,6 +1,7 @@
 import { runQuery, runQueryGetOne } from './azure';
 import * as _ from 'lodash';
 import { promises } from 'dns';
+import bill from '../../../packages/rbh-api-service/lib/bill';
 
 export const getBillByHome = async (homeId: numId): Promise<IBill[]> => {
     return runQueryGetOne(`select * from dbo.bills where homeId = ${homeId}`);
@@ -40,28 +41,33 @@ export const createBill = async (
     totalAmount: number,
     roommates: string[],
     amount: number[],
-    proportion: number[]
+    proportion: number[],
+    billname:string,
+    billdescri:string,
+    created_at:string,
+    create_by:string,
 ): Promise<boolean> => {
     let billId;
     let planId;
     if (plannedSharedFlag == 0) {
         // tslint:disable-next-line: no-floating-promises
-        runQuery(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, totalAmount, isResolved)
-        VALUES (${ownerId},${homeId},${plannedSharedFlag},${totalAmount},0)
+        runQuery(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, totalAmount, isResolved, billname, billdescri, created_at, create_by)
+        VALUES (${ownerId},${homeId},${plannedSharedFlag},${totalAmount},0, \'${billname}\', \'${billdescri}\', \'${created_at}\', \'${create_by}\')
         SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills)`).then(async (result) => {
             billId = (result as IBillCreateResponse).id;
             await createUser2Bill(billId, roommates, amount, proportion, 0, 0);
         });
     } else {
         if (sharePlanid == -1) {
-            planId = runQuery(`INSERT INTO dbo.sharePlans (full_name, HouseId) VALUES(\'${full_name}\', ${homeId})
+            planId = await runQuery(`INSERT INTO dbo.sharePlans (full_name, HouseId) VALUES(\'${full_name}\', ${homeId})
             SELECT id FROM dbo.sharePlans where id= (SELECT max(id) FROM dbo.sharePlans`);
-            billId = runQueryGetOne(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved)
-        VALUES (${ownerId},${homeId},${plannedSharedFlag},${planId},${totalAmount},0)
+            billId = await runQuery(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved, billname, billdescri, created_at, create_by)
+        VALUES (${ownerId},${homeId},${plannedSharedFlag},${planId},${totalAmount},0, \'${billname}\', \'${billdescri}\', \'${created_at}\', \'${create_by}\')
         SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills)`);
+            console.info(planId, billId)
         } else {
-            billId = runQueryGetOne(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved)
-        VALUES (${ownerId},${homeId},${plannedSharedFlag},${sharePlanid},${totalAmount},0)
+            billId = runQueryGetOne(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved,billname, billdescri, created_at, create_by)
+        VALUES (${ownerId},${homeId},${plannedSharedFlag},${sharePlanid},${totalAmount},0, \'${billname}\', \'${billdescri}\', \'${created_at}\', \'${create_by}\')
         SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills)`);
         }
     }

@@ -10,6 +10,8 @@ declare interface IBill {
     created_by: string;
     updated_at: Date;
     updated_by: string;
+    billName: string;
+    descri:string;
 }
 
 declare interface IUser2Bill {
