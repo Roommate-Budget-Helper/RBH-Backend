@@ -16,7 +16,7 @@ export const createBill = async (ownerId: numId, homeId: numId, plannedSharedFla
         VALUES (${ownerId},${homeId},${plannedSharedFlag},${totalAmount},0)`)
     }else{
         if(sharePlanid==-1){
-            planId = runQuery(`INSERT INTO dbo.sharePlans (full_name) VALUES(\'${full_name}\')
+            planId = runQuery(`INSERT INTO dbo.sharePlans (full_name, HouseId) VALUES(\'${full_name}\', ${homeId})
             SELECT id FROM dbo.sharePlans where id= (SELECT max(id) FROM dbo.sharePlans`)
         }
         billId = runQueryGetOne(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved)
