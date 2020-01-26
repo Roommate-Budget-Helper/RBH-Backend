@@ -38,3 +38,7 @@ declare interface IBillCreateInfo {
     amount: number[];
     proportion: number[];
 }
+
+declare interface IBillCreateResponse{
+    id:numId
+}
