@@ -44,7 +44,7 @@ export const createBill = async (
     proportion: number[],
     billname:string,
     billdescri:string,
-    created_at:string,
+    created_at:Date,
     created_by:string,
 ): Promise<boolean> => {
     let billId;

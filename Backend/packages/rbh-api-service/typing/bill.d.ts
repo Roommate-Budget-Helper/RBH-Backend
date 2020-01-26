@@ -57,7 +57,7 @@ declare interface IBillCreateInfo {
     proportion: number[];
     billName: string;
     descri: string;
-    created_at:string;
+    created_at:Date;
     created_by:string;
 }
 

@@ -12,7 +12,7 @@ export const createBill: RequestHandler = async (req, res) => {
         req.body.roommates,
         req.body.amount,
         req.body.proportion,
-        req.body.billname,
+        req.body.billName,
         req.body.descri,
         req.body.created_at,
         req.body.created_by
