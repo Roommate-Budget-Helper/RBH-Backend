@@ -8,11 +8,14 @@ export class BillApi extends ApiClient {
 
     public getBillByUser = async (userId: numId) => this.httpClient.request<IBill[]>('get', `/api/bill/byuser?userId=${userId}`);
 
-    public deleteBill = async (billid:numId) => this.httpClient.request<Boolean>('delete', `/api/bill?billid=${billid}`)
+    public getBillById = async (billId: numId) => this.httpClient.request<IBill>('get', `/api/bill/byid?billId=${billId}`);
 
-    public markAsResolved = async (billid:numId) => this.httpClient.request<Boolean>('put', `/api/bill?billid = ${billid}`)
+    public deleteBill = async (billid: numId) => this.httpClient.request<Boolean>('delete', `/api/bill?billId=${billid}`);
 
-    public getSharePlans = async (houseId:numId) => this.httpClient.request<IBillSharePlan[]>('get',`/api/bill/shareplan?houseId=${houseId}`)
+    public markAsResolved = async (billid: numId) => this.httpClient.request<Boolean>('put', `/api/bill?billId = ${billid}`);
+
+    public getSharePlans = async (houseId: numId) =>
+        this.httpClient.request<IBillSharePlan[]>('get', `/api/bill/shareplan?houseId=${houseId}`);
 }
 
 export default (client: HttpClient) => new BillApi(client);
