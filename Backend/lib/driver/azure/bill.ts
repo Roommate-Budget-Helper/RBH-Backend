@@ -132,29 +132,75 @@ export const getSharePlans = async (houseId: numId): Promise<IBillSharePlan[]> =
     let id = [] as number[];
     let name = [] as string[];
 
-    await runQuery(`SELECT id, full_name from dbo.sharePlans where dbo.sharePlans.HouseId = ${houseId}`).then(async (result) => {
+    let what = await runQueryGetOne(`SELECT id, full_name from dbo.sharePlans where dbo.sharePlans.HouseId = ${houseId}`).then(async (result) => {
         if (!result) {
             return sharePlans;
         }
         (result as IBillSharePlanReturnValue[]).forEach(async (element) => {
             id.push(element.id);
-            name.push(element.name);
+            name.push(element.full_name);
             console.log(element);
-            await runQuery(`SELECT dbo.shareRatioId.userName, dbo.shareRatioId.ratio FROM dbo.shareRatioId
+            await runQueryGetOne(`SELECT dbo.shareRatioId.userName, dbo.shareRatioId.ratio FROM dbo.shareRatioId
                 where dbo.shareRatioId.sharePlansid = ${id[id.length - 1]}`).then((ratios) => {
+                    console.info("ratio", ratios);
                 if (!ratios) {
                     return sharePlans;
                 }
                 (ratios as IBillShareRatioReturnValue[]).forEach(async (pair) => {
-                    roommates.push(pair.roommates);
-                    prop.push(pair.proportion);
+                    roommates.push(pair.userName);
+                    prop.push(pair.ratio);
                 });
-                sharePlans.push({ id: id[id.length - 1], name: name[name.length - 1], roommates: roommates, proportion: prop });
+                sharePlans.push({ id: id[id.length - 1], full_name: name[name.length - 1], userName: roommates, ratio: prop });
             });
             prop = [];
             roommates = [];
+            console.info(sharePlans)
         });
-    });
-
-    return sharePlans;
+    })
+    // .finally(()=>{
+        
+        console.info(sharePlans)
+        return sharePlans;
+    // })
+    // let ans = await sharePlanHelper(houseId) as unknown as IBillSharePlan[]
+    // console.info(ans)
+    // return ans
 };
+
+const sharePlanHelper = async (houseId: numId)=>{
+    let sharePlans = [] as IBillSharePlan[];
+    let roommates = [] as string[];
+    let prop = [] as number[];
+    let id = [] as number[];
+    let name = [] as string[];
+
+    await runQueryGetOne(`SELECT id, full_name from dbo.sharePlans where dbo.sharePlans.HouseId = ${houseId}`).then(async (result) => {
+        if (!result) {
+            return sharePlans;
+        }
+        (result as IBillSharePlanReturnValue[]).forEach(async (element) => {
+            id.push(element.id);
+            name.push(element.full_name);
+            console.log(element);
+            await runQueryGetOne(`SELECT dbo.shareRatioId.userName, dbo.shareRatioId.ratio FROM dbo.shareRatioId
+                where dbo.shareRatioId.sharePlansid = ${id[id.length - 1]}`).then((ratios) => {
+                    console.info("ratio", ratios);
+                if (!ratios) {
+                    return sharePlans;
+                }
+                (ratios as IBillShareRatioReturnValue[]).forEach(async (pair) => {
+                    roommates.push(pair.userName);
+                    prop.push(pair.ratio);
+                });
+                sharePlans.push({ id: id[id.length - 1], full_name: name[name.length - 1], userName: roommates, ratio: prop });
+            });
+            prop = [];
+            roommates = [];
+            console.info(sharePlans)
+        });
+        return sharePlans
+    })
+    
+}
+
+

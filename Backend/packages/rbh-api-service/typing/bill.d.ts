@@ -32,17 +32,17 @@ declare interface IUser2Bill {
 }
 declare interface IBillSharePlanReturnValue{
     id:numId;
-    name:string;
+    full_name:string;
 }
 declare interface IBillShareRatioReturnValue{
-    roommates: string;
-    proportion: number;
+    userName: string;
+    ratio: number;
 }
 declare interface IBillSharePlan {
     id:numId;
-    name:string;
-    roommates: string[];
-    proportion: number[];
+    full_name:string;
+    userName: string[];
+    ratio: number[];
 }
 
 declare interface IBillCreateInfo {
