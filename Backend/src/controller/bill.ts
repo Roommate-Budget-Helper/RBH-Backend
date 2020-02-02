@@ -32,7 +32,7 @@ export const getBillByUser: RequestHandler = async (req, res) => {
 };
 
 export const getBillById: RequestHandler = async (req, res) => {
-    const result: IBill = await Azure.bill.getBillById(req.query.billId);
+    const result: IBillDetail[] = await Azure.bill.getBillById(req.query.billId);
     return res.send(result);
 };
 

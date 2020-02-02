@@ -11,7 +11,28 @@ declare interface IBill {
     updated_at: Date;
     updated_by: string;
     billName: string;
-    descri:string;
+    descri: string;
+}
+
+declare interface IBillDetail {
+    id: numId;
+    ownerId: numId;
+    homeId: numId;
+    plannedSharedFlag: number;
+    sharePlanid: number;
+    totalAmount: number;
+    isResolved: number;
+    created_at: Date;
+    created_by: string;
+    updated_at: Date;
+    updated_by: string;
+    billName: string;
+    descri: string;
+    user2billId: number;
+    userId: number;
+    proportion: number;
+    amount: number;
+    userName: string;
 }
 
 declare interface IUser2Bill {
@@ -30,17 +51,17 @@ declare interface IUser2Bill {
     billName: string;
     descri: string;
 }
-declare interface IBillSharePlanReturnValue{
-    id:numId;
-    full_name:string;
+declare interface IBillSharePlanReturnValue {
+    id: numId;
+    full_name: string;
 }
-declare interface IBillShareRatioReturnValue{
+declare interface IBillShareRatioReturnValue {
     userName: string;
     ratio: number;
 }
 declare interface IBillSharePlan {
-    id:numId;
-    full_name:string;
+    id: numId;
+    full_name: string;
     userName: string[];
     ratio: number[];
 }
@@ -50,17 +71,17 @@ declare interface IBillCreateInfo {
     homeId: numId;
     plannedSharedFlag: number;
     sharePlanid: number;
-    full_name:string;
+    full_name: string;
     totalAmount: number;
     roommates: string[];
     amount: number[];
     proportion: number[];
     billName: string;
     descri: string;
-    created_at:Date;
-    created_by:string;
+    created_at: Date;
+    created_by: string;
 }
 
-declare interface IBillCreateResponse{
+declare interface IBillCreateResponse {
     id: numId;
 }

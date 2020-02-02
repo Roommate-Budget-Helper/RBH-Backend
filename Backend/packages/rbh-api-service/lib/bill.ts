@@ -8,7 +8,7 @@ export class BillApi extends ApiClient {
 
     public getBillByUser = async (userId: numId) => this.httpClient.request<IBill[]>('get', `/api/bill/byuser?userId=${userId}`);
 
-    public getBillById = async (billId: numId) => this.httpClient.request<IBill>('get', `/api/bill/byid?billId=${billId}`);
+    public getBillById = async (billId: numId) => this.httpClient.request<IBillDetail[]>('get', `/api/bill/byid?billId=${billId}`);
 
     public deleteBill = async (billid: numId) => this.httpClient.request<Boolean>('delete', `/api/bill?billId=${billid}`);
 
