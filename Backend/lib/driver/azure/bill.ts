@@ -29,10 +29,6 @@ const createUser2Bill = async (
             runQueryGetOne(
                 `INSERT INTO dbo.shareRatioId (sharePlansid, userName, ratio) VALUES (${planId}, \'${roommates[i]}\', ${proportion[i]})`
             );
-        } else {
-            runQueryGetOne(
-                `INSERT INTO dbo.shareRatioId (sharePlansid, userName, ratio) VALUES (${sharePlanid}, \'${roommates[i]}\', ${proportion[i]})`
-            );
         }
     }
 };
@@ -165,10 +161,11 @@ export const getSharePlans = async (result: IBillSharePlanReturnValue[]): Promis
     if (!result) {
         return sharePlans;
     }
-
+    console.info(result)
     var promises = result.map((element) => {
         id.push(element.id);
         name.push(element.full_name);
+        console.info(id, name)
         return runQueryGetOne(`SELECT dbo.shareRatioId.userName, dbo.shareRatioId.ratio FROM dbo.shareRatioId
                 where dbo.shareRatioId.sharePlansid = ${id[id.length - 1]}`)
             .then((ratios) => {
@@ -179,7 +176,7 @@ export const getSharePlans = async (result: IBillSharePlanReturnValue[]): Promis
                     roommates.push(pair.userName);
                     prop.push(pair.ratio);
                 });
-                sharePlans.push({ id: id[id.length - 1], full_name: name[name.length - 1], userName: roommates, ratio: prop });
+                sharePlans.push({ id: element.id, full_name: element.full_name, userName: roommates, ratio: prop });
             })
             .then(() => {
                 prop = [];
