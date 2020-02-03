@@ -1,6 +1,5 @@
 import { runQuery, runQueryGetOne } from './azure';
 import * as _ from 'lodash';
-import bill from '../../../packages/rbh-api-service/lib/bill';
 
 export const getBillByHome = async (homeId: numId): Promise<IBill[]> => {
     return runQueryGetOne(`select * from dbo.bills where homeId = ${homeId}`);
@@ -15,7 +14,7 @@ const createUser2Bill = async (
     planId: number
 ) => {
     for (let i = 0; i < roommates.length; i++) {
-        let userId;
+        var userId;
         // tslint:disable-next-line: no-floating-promises
         runQuery(`SELECT id FROM dbo.users WHERE userName = \'${roommates[i]}\'`).then(async (result) => {
             userId = (result as IBillCreateResponse).id;
@@ -53,8 +52,8 @@ export const createBill = async (
     created_at: Date,
     created_by: string
 ): Promise<boolean> => {
-    let billId;
-    let planId: number;
+    var billId;
+    var planId: number;
     // if this is not stored as a shared plan, the plannedSharedFlag from frontend would be 0
 
     if (plannedSharedFlag == 0) {
@@ -135,7 +134,7 @@ where billId=${billId}`);
 };
 
 export const deleteBill = async (billid: numId): Promise<Boolean> => {
-    console.log(billid);
+    // console.log(billid);
     return runQueryGetOne(`
     DELETE FROM dbo.users2bills where billId = ${billid}
     DELETE FROM dbo.bills WHERE id = ${billid}`);
@@ -147,81 +146,47 @@ export const markAsResolved = async (billid: numId): Promise<Boolean> => {
         WHERE id = ${billid}`);
 };
 
-export const getSharePlans = async (houseId: numId): Promise<IBillSharePlan[]> => {
-    let sharePlans = [] as IBillSharePlan[];
-    let roommates = [] as string[];
-    let prop = [] as number[];
-    let id = [] as number[];
-    let name = [] as string[];
-
-    let what = await runQueryGetOne(`SELECT id, full_name from dbo.sharePlans where dbo.sharePlans.HouseId = ${houseId}`).then(
-        async (result) => {
-            if (!result) {
-                return sharePlans;
-            }
-            (result as IBillSharePlanReturnValue[]).forEach(async (element) => {
-                id.push(element.id);
-                name.push(element.full_name);
-                console.log(element);
-                await runQueryGetOne(`SELECT dbo.shareRatioId.userName, dbo.shareRatioId.ratio FROM dbo.shareRatioId
-                where dbo.shareRatioId.sharePlansid = ${id[id.length - 1]}`).then((ratios) => {
-                    console.info('ratio', ratios);
-                    if (!ratios) {
-                        return sharePlans;
-                    }
-                    (ratios as IBillShareRatioReturnValue[]).forEach(async (pair) => {
-                        roommates.push(pair.userName);
-                        prop.push(pair.ratio);
-                    });
-                    sharePlans.push({ id: id[id.length - 1], full_name: name[name.length - 1], userName: roommates, ratio: prop });
-                });
-                prop = [];
-                roommates = [];
-                console.info(sharePlans);
-            });
-        }
+export const getSharePlanValue = async (houseId: numId): Promise<IBillSharePlan[]> => {
+    const returnValue: IBillSharePlanReturnValue[] = await runQueryGetOne(
+        `SELECT id, full_name from dbo.sharePlans where dbo.sharePlans.HouseId = ${houseId}`
     );
-    // .finally(()=>{
-
-    console.info(sharePlans);
+    const sharePlans: IBillSharePlan[] = await getSharePlans(returnValue);
     return sharePlans;
-    // })
-    // let ans = await sharePlanHelper(houseId) as unknown as IBillSharePlan[]
-    // console.info(ans)
-    // return ans
 };
 
-const sharePlanHelper = async (houseId: numId) => {
-    let sharePlans = [] as IBillSharePlan[];
-    let roommates = [] as string[];
-    let prop = [] as number[];
-    let id = [] as number[];
-    let name = [] as string[];
+export const getSharePlans = async (result: IBillSharePlanReturnValue[]): Promise<IBillSharePlan[]> => {
+    var sharePlans = [] as IBillSharePlan[];
+    var roommates = [] as string[];
+    var prop = [] as number[];
+    var id = [] as number[];
+    var name = [] as string[];
+    if (!result) {
+        return sharePlans;
+    }
 
-    await runQueryGetOne(`SELECT id, full_name from dbo.sharePlans where dbo.sharePlans.HouseId = ${houseId}`).then(async (result) => {
-        if (!result) {
-            return sharePlans;
-        }
-        (result as IBillSharePlanReturnValue[]).forEach(async (element) => {
-            id.push(element.id);
-            name.push(element.full_name);
-            console.log(element);
-            await runQueryGetOne(`SELECT dbo.shareRatioId.userName, dbo.shareRatioId.ratio FROM dbo.shareRatioId
-                where dbo.shareRatioId.sharePlansid = ${id[id.length - 1]}`).then((ratios) => {
-                console.info('ratio', ratios);
+    var promises = result.map((element) => {
+        id.push(element.id);
+        name.push(element.full_name);
+        return runQueryGetOne(`SELECT dbo.shareRatioId.userName, dbo.shareRatioId.ratio FROM dbo.shareRatioId
+                where dbo.shareRatioId.sharePlansid = ${id[id.length - 1]}`)
+            .then((ratios) => {
                 if (!ratios) {
                     return sharePlans;
                 }
-                (ratios as IBillShareRatioReturnValue[]).forEach(async (pair) => {
+                (ratios as IBillShareRatioReturnValue[]).forEach((pair) => {
                     roommates.push(pair.userName);
                     prop.push(pair.ratio);
                 });
                 sharePlans.push({ id: id[id.length - 1], full_name: name[name.length - 1], userName: roommates, ratio: prop });
+            })
+            .then(() => {
+                prop = [];
+                roommates = [];
+                return sharePlans;
             });
-            prop = [];
-            roommates = [];
-            console.info(sharePlans);
-        });
-        return sharePlans;
+    });
+
+    return Promise.all(promises).then((results) => {
+        return results[0];
     });
 };
