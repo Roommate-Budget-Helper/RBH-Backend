@@ -3,6 +3,7 @@ import auth from './auth';
 import user from './user';
 import home from './home';
 import invitation from './invitation';
+import bill from './bill';
 
 export default class {
     private client: ReturnType<typeof HttpClient>;
@@ -22,5 +23,8 @@ export default class {
     }
     public get invitation() {
         return invitation(this.client);
+    }
+    public get bill(){
+        return bill(this.client);
     }
 }

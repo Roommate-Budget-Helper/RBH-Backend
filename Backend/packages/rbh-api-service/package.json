@@ -1,8 +1,9 @@
 {
     "name": "rbh-api-service",
-    "version": "1.3.3",
+    "version": "1.5.4",
     "types": "./index.d.ts",
     "directories": {
+        "test": "mocha --require babel-register tests/*.js --exit",
         "lib": "./lib"
     },
     "description": "api functions for rbh-backend system",

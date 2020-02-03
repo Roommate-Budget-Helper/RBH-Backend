@@ -4,11 +4,11 @@ import { promises } from 'dns';
 
 export const insertHomeInfo = async (fullname: string, adminname: string, adminid: numId): Promise<Record<string, numId>> => {
     return runQuery(
-        `INSERT INTO dbo.houses(full_name, admin_name, admin_id) VALUES (\'${fullname}\', \'${fullname}\', \'${adminid}\');
+        `INSERT INTO dbo.houses(full_name, admin_name, admin_id) VALUES (\'${fullname}\', \'${adminname}\', \'${adminid}\');
         declare @tempHouseId int;
         select @tempHouseId = MAX(dbo.houses.id)
         from dbo.houses
-        where full_name = \'${fullname}\' and admin_name = \'${fullname}\' and admin_id = \'${adminid}\'
+        where full_name = \'${fullname}\' and admin_name = \'${adminname}\' and admin_id = \'${adminid}\'
 
         INSERT INTO dbo.User2Houses(HouseId,userId) VALUES (@tempHouseId, \'${adminid}\');
         SELECT id FROM dbo.houses where id= (SELECT max(id) FROM dbo.houses);
@@ -16,7 +16,7 @@ export const insertHomeInfo = async (fullname: string, adminname: string, admini
     );
 };
 
-export const getHomeInfo = async (userId: numId): Promise<IUser2Home[]> => {
+export const getHomeInfo = async (userId: number): Promise<IUser2Home[]> => {
     return runQueryGetOne(`declare @Max as int
     declare @Current as int
     declare @tempHouseId as int
@@ -86,6 +86,7 @@ export const getHomeInfo = async (userId: numId): Promise<IUser2Home[]> => {
     
             IF (@tempName is not null)
             UPDATE #temp_HouseInfo_Users
+            
             SET #temp_HouseInfo_Users.roommates =#temp_HouseInfo_Users.roommates + @tempName + '  '
             WHERE #temp_HouseInfo_Users.id = @Current;
         
@@ -100,7 +101,7 @@ export const getHomeInfo = async (userId: numId): Promise<IUser2Home[]> => {
       select * from #temp_HouseInfo_Users`);
 };
 
-export const getHomeDetail = async (houseId: numId): Promise<IUserInfo[]> => {
+export const getHomeDetail = async (houseId: number): Promise<IUserInfo[]> => {
     return runQueryGetOne(`select dbo.users.*
     from dbo.User2Houses
     inner join dbo.users
@@ -108,10 +109,10 @@ export const getHomeDetail = async (houseId: numId): Promise<IUserInfo[]> => {
     where HouseId = ${houseId}`);
 };
 
-export const removeRoommate = async (userName: string, houseId: numId): Promise<Boolean> => {
+export const removeRoommate = async (userName: string, houseId:number): Promise<Boolean> =>{
     // return runQueryGetOne(`select * from dbo.User2Houses`)
     return runQueryGetOne(`DELETE dbo.User2Houses FROM dbo.User2Houses 
     inner join dbo.users 
     on dbo.User2Houses.userId=dbo.users.id
-    WHERE dbo.users.userName=\'${userName}\' and dbo.User2Houses.HouseId=${houseId}`);
-};
+    WHERE dbo.users.userName=\'${userName}\' and dbo.User2Houses.HouseId=${houseId}`)
+}
