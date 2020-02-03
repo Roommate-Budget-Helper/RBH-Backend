@@ -49,6 +49,7 @@ export const createBill = async (
     proportion: number[],
     billname: string,
     billdescri: string,
+    isRecurrent: number,
     created_at: Date,
     created_by: string
 ): Promise<boolean> => {
@@ -58,8 +59,8 @@ export const createBill = async (
 
     if (plannedSharedFlag == 0) {
         // tslint:disable-next-line: no-floating-promises
-        runQuery(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, totalAmount, isResolved, billName, descri, created_at, created_by)
-        VALUES (${ownerId},${homeId},${plannedSharedFlag},${totalAmount},0, \'${billname}\', \'${billdescri}\', \'${created_at}\', \'${created_by}\')
+        runQuery(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, totalAmount, isResolved, billName, descri,isRecurrent,  created_at, created_by)
+        VALUES (${ownerId},${homeId},${plannedSharedFlag},${totalAmount},0, \'${billname}\', \'${billdescri}\',${isRecurrent} \'${created_at}\', \'${created_by}\')
         SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills)`).then(async (result) => {
             billId = (result as IBillCreateResponse).id;
             await createUser2Bill(billId, roommates, amount, proportion, 0, 0);

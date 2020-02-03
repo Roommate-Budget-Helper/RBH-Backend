@@ -14,8 +14,9 @@ export const createBill: RequestHandler = async (req, res) => {
         req.body.proportion,
         req.body.billName,
         req.body.descri,
+        req.body.isRecurrent,
         req.body.created_at,
-        req.body.created_by
+        req.body.created_by,
     );
 
     return res.send(result);
