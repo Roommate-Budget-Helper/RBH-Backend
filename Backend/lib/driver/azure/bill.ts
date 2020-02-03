@@ -105,7 +105,7 @@ export const getBillByUser = async (userId: numId): Promise<IBill[]> => {
 export const getBillById = async (billId: numId): Promise<IBillDetail[]> => {
     return runQueryGetOne(`
 WITH cte_bill_house (billId, ownerId, homeId, sharePlanid, totalAmount, billName,
-descri,user2billId, userId,proportion, amount) AS (
+descri,created_at,user2billId, userId,proportion, amount) AS (
 SELECT    
     dbo.bills.id,
 	dbo.bills.ownerId,
@@ -113,7 +113,8 @@ SELECT
 	dbo.bills.sharePlanid,
 	dbo.bills.totalAmount,
 	dbo.bills.billName,
-	dbo.bills.descri,
+    dbo.bills.descri,
+    dbo.bills.created_at,
 	dbo.users2bills.id,
 	dbo.users2bills.userId,
 	dbo.users2bills.proportion,
