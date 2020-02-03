@@ -63,6 +63,7 @@ export const createBill = async (
         });
     } else {
         // if this is a newly created shareplan, the sharePlanid from frontend would be -1
+        console.info(sharePlanid)
         if (sharePlanid == -1) {
             await runQuery(`INSERT INTO dbo.sharePlans (full_name, HouseId) VALUES (\'${full_name}\', ${homeId})
             SELECT id FROM dbo.sharePlans where id= (SELECT max(id) FROM dbo.sharePlans)`).then(async (planResult) => {
@@ -79,7 +80,7 @@ export const createBill = async (
         }
         //else it would be a used shareplan
         else {
-            runQueryGetOne(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved,billName, descri, created_at, created_by)
+            runQuery(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved,billName, descri, created_at, created_by)
         VALUES (${ownerId},${homeId},${plannedSharedFlag},${sharePlanid},${totalAmount},0, \'${billname}\', \'${billdescri}\', \'${created_at}\', \'${created_by}\')
         SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills)`).then(async (result) => {
                 billId = (result as IBillCreateResponse).id;
