@@ -15,7 +15,7 @@ declare interface IBill {
 }
 
 declare interface IBillDetail {
-    id: numId;
+    billId: numId;
     ownerId: numId;
     homeId: numId;
     plannedSharedFlag: number;
@@ -48,7 +48,7 @@ declare interface IUser2Bill {
     created_by: string;
     updated_at: Date;
     updated_by: string;
-    billName: string; 
+    billName: string;
     descri: string;
     isRecurrent: number;
 }
@@ -79,9 +79,9 @@ declare interface IBillCreateInfo {
     proportion: number[];
     billName: string;
     descri: string;
-    isRecurrent:number;
-    created_at:Date;
-    created_by:string;
+    isRecurrent: number;
+    created_at: Date;
+    created_by: string;
 }
 
 declare interface IBillCreateResponse {

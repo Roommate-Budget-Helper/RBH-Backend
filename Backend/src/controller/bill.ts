@@ -16,7 +16,7 @@ export const createBill: RequestHandler = async (req, res) => {
         req.body.descri,
         req.body.isRecurrent,
         req.body.created_at,
-        req.body.created_by,
+        req.body.created_by
     );
 
     return res.send(result);
@@ -34,6 +34,7 @@ export const getBillByUser: RequestHandler = async (req, res) => {
 
 export const getBillById: RequestHandler = async (req, res) => {
     const result: IBillDetail[] = await Azure.bill.getBillById(req.query.billId);
+
     return res.send(result);
 };
 
@@ -50,5 +51,11 @@ export const markAsResolved: RequestHandler = async (req, res) => {
 export const getSharePlans: RequestHandler = async (req, res) => {
     const result: IBillSharePlanReturnValue[] = await Azure.bill.getSharePlanValue(req.query.houseId);
 
+    return res.send(result);
+};
+
+export const editBillById: RequestHandler = async (req, res) => {
+    // console.info(req.body);
+    const result: Boolean = await Azure.bill.editBillById(req.body.bills);
     return res.send(result);
 };

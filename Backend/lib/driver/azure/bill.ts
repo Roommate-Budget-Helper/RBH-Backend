@@ -63,7 +63,7 @@ export const createBill = async (
         });
     } else {
         // if this is a newly created shareplan, the sharePlanid from frontend would be -1
-        console.info(sharePlanid)
+        console.info(sharePlanid);
         if (sharePlanid == -1) {
             await runQuery(`INSERT INTO dbo.sharePlans (full_name, HouseId) VALUES (\'${full_name}\', ${homeId})
             SELECT id FROM dbo.sharePlans where id= (SELECT max(id) FROM dbo.sharePlans)`).then(async (planResult) => {
@@ -102,34 +102,34 @@ export const getBillByUser = async (userId: numId): Promise<IBill[]> => {
 
 export const getBillById = async (billId: numId): Promise<IBillDetail[]> => {
     return runQueryGetOne(`
-WITH cte_bill_house (billId, ownerId, homeId, sharePlanid, totalAmount, billName,
-descri,created_at,user2billId, userId,proportion, amount) AS (
-SELECT    
-    dbo.bills.id,
-	dbo.bills.ownerId,
-	dbo.bills.homeId,
-	dbo.bills.sharePlanid,
-	dbo.bills.totalAmount,
-	dbo.bills.billName,
-    dbo.bills.descri,
-    dbo.bills.created_at,
-	dbo.users2bills.id,
-	dbo.users2bills.userId,
-	dbo.users2bills.proportion,
-	dbo.users2bills.amount
+                        WITH cte_bill_house (billId, ownerId, homeId, sharePlanid, totalAmount, billName,
+                        descri,created_at,user2billId, userId,proportion, amount) AS (
+                        SELECT    
+                            dbo.bills.id,
+                            dbo.bills.ownerId,
+                            dbo.bills.homeId,
+                            dbo.bills.sharePlanid,
+                            dbo.bills.totalAmount,
+                            dbo.bills.billName,
+                            dbo.bills.descri,
+                            dbo.bills.created_at,
+                            dbo.users2bills.id,
+                            dbo.users2bills.userId,
+                            dbo.users2bills.proportion,
+                            dbo.users2bills.amount
 
-FROM    
-    dbo.bills
-	INNER JOIN dbo.users2bills
-on 
-	dbo.bills.id = dbo.users2bills.billId
-)
+                        FROM    
+                            dbo.bills
+                            INNER JOIN dbo.users2bills
+                        on 
+                            dbo.bills.id = dbo.users2bills.billId
+                        )
 
-select cte_bill_house.*,dbo.users.userName
-from cte_bill_house
-inner join dbo.users
-on dbo.users.id = cte_bill_house.userId
-where billId=${billId}`);
+                        select cte_bill_house.*,dbo.users.userName
+                        from cte_bill_house
+                        inner join dbo.users
+                        on dbo.users.id = cte_bill_house.userId
+                        where billId=${billId}`);
 };
 
 export const deleteBill = async (billid: numId): Promise<Boolean> => {
@@ -162,11 +162,11 @@ export const getSharePlans = async (result: IBillSharePlanReturnValue[]): Promis
     if (!result) {
         return sharePlans;
     }
-    console.info(result)
+    console.info(result);
     var promises = result.map((element) => {
         id.push(element.id);
         name.push(element.full_name);
-        console.info(id, name)
+        console.info(id, name);
         return runQueryGetOne(`SELECT dbo.shareRatioId.userName, dbo.shareRatioId.ratio FROM dbo.shareRatioId
                 where dbo.shareRatioId.sharePlansid = ${id[id.length - 1]}`)
             .then((ratios) => {
@@ -188,5 +188,24 @@ export const getSharePlans = async (result: IBillSharePlanReturnValue[]): Promis
 
     return Promise.all(promises).then((results) => {
         return results[0];
+    });
+};
+
+export const editBillById = async (billDetails: IBillDetail[]): Promise<Boolean> => {
+    // console.info(billDetails);
+    var promises = billDetails.map((billDetail: IBillDetail) => {
+        return runQueryGetOne(`
+                        UPDATE dbo.bills
+                        SET billName = \'${billDetail.billName}\',
+                        totalAmount = ${billDetail.totalAmount}
+                        where id = ${billDetail.billId}
+
+                        update dbo.users2bills
+                        set proportion = ${billDetail.proportion},
+                        amount = ${billDetail.totalAmount}*${billDetail.proportion}
+                        where billId = ${billDetail.billId} and userId = ${billDetail.userId}`);
+    });
+    return Promise.all(promises).then((results) => {
+        return true;
     });
 };

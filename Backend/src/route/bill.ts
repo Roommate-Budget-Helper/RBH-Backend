@@ -8,6 +8,7 @@ const router = express.Router();
 router.get('/byhome', asyncMiddleware(controller.getBillByHome));
 router.get('/byuser', asyncMiddleware(controller.getBillByUser));
 router.get('/byid', asyncMiddleware(controller.getBillById));
+router.post('/byid', asyncMiddleware(controller.editBillById));
 router.get('/shareplan', asyncMiddleware(controller.getSharePlans));
 router.post('/', asyncMiddleware(controller.createBill));
 router.delete('', asyncMiddleware(controller.deleteBill));
