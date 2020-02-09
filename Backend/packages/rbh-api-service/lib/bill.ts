@@ -19,6 +19,10 @@ export class BillApi extends ApiClient {
 
     public getSharePlans = async (houseId: numId) =>
         this.httpClient.request<IBillSharePlan[]>('get', `/api/bill/shareplan?houseId=${houseId}`);
+
+    public getRecurrentBill = async (houseId: numId)=> this.httpClient.request<IBillRecurrent[]>('get', `/api/bill/recurrentbill?houseId=${houseId}`);
+
+    
 }
 
 export default (client: HttpClient) => new BillApi(client);

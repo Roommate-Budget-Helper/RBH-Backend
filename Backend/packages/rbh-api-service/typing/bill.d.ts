@@ -60,11 +60,26 @@ declare interface IBillShareRatioReturnValue {
     userName: string;
     ratio: number;
 }
+
+declare interface IBillRecurrentReturnValue{
+    id: numId;
+    full_name: string;
+    isRecurentdatetime:Date
+    recurrentInterval:number
+}
 declare interface IBillSharePlan {
     id: numId;
     full_name: string;
     userName: string[];
     ratio: number[];
+}
+declare interface IBillRecurrent {
+    id: numId;
+    full_name: string;
+    userName: string[];
+    ratio: number[];
+    isRecurentdatetime:Date
+    recurrentInterval:number
 }
 
 declare interface IBillCreateInfo {
@@ -79,9 +94,11 @@ declare interface IBillCreateInfo {
     proportion: number[];
     billName: string;
     descri: string;
-    isRecurrent: number;
-    created_at: Date;
-    created_by: string;
+    isRecurrent:number;
+    isRecurrentDateTime:Date;
+    recurrentIntervl:number;
+    created_at:Date;
+    created_by:string;
 }
 
 declare interface IBillCreateResponse {
