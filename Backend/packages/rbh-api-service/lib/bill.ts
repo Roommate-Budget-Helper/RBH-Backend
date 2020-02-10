@@ -22,6 +22,9 @@ export class BillApi extends ApiClient {
 
     public getRecurrentBill = async (houseId: numId)=> this.httpClient.request<IBillRecurrent[]>('get', `/api/bill/recurrentbill?houseId=${houseId}`);
 
+    public updateRecurrent = async (recurrent:IBillRecurrentUpdate)=> 
+        this.httpClient.request<Boolean, IBillRecurrentUpdate>('post', '/api/bill/recurrentbill', recurrent);
+
     
 }
 

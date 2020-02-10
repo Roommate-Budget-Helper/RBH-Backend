@@ -56,7 +56,8 @@ export const createBill = async (
     // if this is not stored as a shared plan, the plannedSharedFlag from frontend would be 0
     if (isRecurrent == 1) {
         console.info(homeId, isRecurrentDateTime, recurrentInterval)
-        await runQuery(`INSERT INTO dbo.sharePlans (HouseId, isRecurent, isRecurentdatetime, recurrentInterval ) VALUES (${homeId}, 1,\'${isRecurrentDateTime}\', ${recurrentInterval} )
+        await runQuery(`INSERT INTO dbo.sharePlans (HouseId, isRecurent, isRecurentdatetime, recurrentInterval, billOwner, full_name,billDescri ) VALUES 
+        (${homeId}, 1,\'${isRecurrentDateTime}\', ${recurrentInterval}, ${ownerId}, \'${billname}\', \'${billdescri}\' )
             SELECT id FROM dbo.sharePlans where id= (SELECT max(id) FROM dbo.sharePlans)`).then(async (planResult) => {
             planId = (planResult as IBillCreateResponse).id;
             console.info('planId', planId);
@@ -96,6 +97,7 @@ export const createBill = async (
         }
         //else it would be a used shareplan
         else {
+            console.info(ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, billname, billdescri, created_at, created_by, isRecurrent)
             runQuery(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved,billName, descri, created_at, created_by, isRecurrent)
         VALUES (${ownerId},${homeId},${plannedSharedFlag},${sharePlanid},${totalAmount},0, \'${billname}\', \'${billdescri}\', \'${created_at}\', \'${created_by}\', 0)
         SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills)`).then(async (result) => {
@@ -229,7 +231,7 @@ export const editBillById = async (billDetails: IBillDetail[]): Promise<Boolean>
 
 export const getRecurrentBill = async (houseId: numId): Promise<IBillRecurrent[]> => {
     const returnValue: IBillRecurrentReturnValue[] = await runQueryGetOne(
-        `SELECT id, full_name, isRecurentdatetime, recurrentInterval from dbo.sharePlans where dbo.sharePlans.HouseId = ${houseId} and isRecurent = 1`
+        `SELECT id,billOwner, billDescri, full_name, isRecurentdatetime, recurrentInterval from dbo.sharePlans where dbo.sharePlans.HouseId = ${houseId} and isRecurent = 1`
     );
     console.info("returnValue", returnValue)
     const recurrentBills: IBillRecurrent[] = await getRecurrent(returnValue);
@@ -262,7 +264,7 @@ export const getRecurrent = async (result: IBillRecurrentReturnValue[]): Promise
                     roommates.push(pair.userName);
                     prop.push(pair.ratio);
                 });
-                Recurrentbills.push({ id: element.id, full_name: element.full_name, userName: roommates, ratio: prop, isRecurentdatetime:element.isRecurentdatetime, recurrentInterval:element.recurrentInterval });
+                Recurrentbills.push({ id: element.id,ownerId:element.billOwner ,full_name: element.full_name,descri:element.billDescri, userName: roommates, ratio: prop, isRecurentdatetime:element.isRecurentdatetime, recurrentInterval:element.recurrentInterval });
             })
             .then(() => {
                 prop = [];
@@ -275,3 +277,12 @@ export const getRecurrent = async (result: IBillRecurrentReturnValue[]): Promise
         return results[0];
     });
 };
+
+
+export const updateRecurrent = async (planId:numId, newDate:Date): Promise<Boolean> => {
+    console.info(newDate, planId)
+    runQueryGetOne(`UPDATE dbo.sharePlans SET isRecurentdatetime = \'${newDate}\' where id = ${planId}`)
+
+    return true
+
+}

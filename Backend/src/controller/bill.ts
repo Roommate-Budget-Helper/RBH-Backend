@@ -67,3 +67,9 @@ export const editBillById: RequestHandler = async (req, res) => {
     const result: Boolean = await Azure.bill.editBillById(req.body.bills);
     return res.send(result);
 };
+
+export const updateRecurrent: RequestHandler = async(req, res)=>{
+    console.info(req)
+    const result: Boolean = await Azure.bill.updateRecurrent(req.body.id, req.body.newDate);
+    return res.send(result);
+}

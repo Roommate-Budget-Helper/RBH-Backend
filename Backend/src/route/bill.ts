@@ -14,5 +14,6 @@ router.get('/recurrentbill', asyncMiddleware(controller.getRecurrentBill));
 router.post('/', asyncMiddleware(controller.createBill));
 router.delete('', asyncMiddleware(controller.deleteBill));
 router.put('', asyncMiddleware(controller.markAsResolved));
+router.post('/recurrentbill', asyncMiddleware(controller.updateRecurrent))
 
 export default router;

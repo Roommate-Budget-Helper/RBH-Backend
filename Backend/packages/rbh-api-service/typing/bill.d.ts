@@ -63,6 +63,8 @@ declare interface IBillShareRatioReturnValue {
 
 declare interface IBillRecurrentReturnValue{
     id: numId;
+    billOwner:numId;
+    billDescri:string;
     full_name: string;
     isRecurentdatetime:Date
     recurrentInterval:number
@@ -75,7 +77,9 @@ declare interface IBillSharePlan {
 }
 declare interface IBillRecurrent {
     id: numId;
+    ownerId:numId
     full_name: string;
+    descri:string;
     userName: string[];
     ratio: number[];
     isRecurentdatetime:Date
@@ -103,4 +107,9 @@ declare interface IBillCreateInfo {
 
 declare interface IBillCreateResponse {
     id: numId;
+}
+
+declare interface IBillRecurrentUpdate{
+    id:numId;
+    newDate:Date;
 }
