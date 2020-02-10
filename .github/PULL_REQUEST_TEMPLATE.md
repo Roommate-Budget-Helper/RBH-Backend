@@ -1,6 +1,6 @@
 **Addressed Issue(s)**
 
-closes # 
+closes #
 
 ## Acceptance Criteria
 
