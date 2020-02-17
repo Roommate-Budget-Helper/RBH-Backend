@@ -32,6 +32,7 @@ declare interface IBillDetail {
     userId: number;
     proportion: number;
     amount: number;
+    proof: string;
     userName: string;
 }
 
@@ -61,13 +62,13 @@ declare interface IBillShareRatioReturnValue {
     ratio: number;
 }
 
-declare interface IBillRecurrentReturnValue{
+declare interface IBillRecurrentReturnValue {
     id: numId;
-    billOwner:numId;
-    billDescri:string;
+    billOwner: numId;
+    billDescri: string;
     full_name: string;
-    isRecurentdatetime:Date
-    recurrentInterval:number
+    isRecurentdatetime: Date;
+    recurrentInterval: number;
 }
 declare interface IBillSharePlan {
     id: numId;
@@ -77,13 +78,13 @@ declare interface IBillSharePlan {
 }
 declare interface IBillRecurrent {
     id: numId;
-    ownerId:numId
+    ownerId: numId;
     full_name: string;
-    descri:string;
+    descri: string;
     userName: string[];
     ratio: number[];
-    isRecurentdatetime:Date
-    recurrentInterval:number
+    isRecurentdatetime: Date;
+    recurrentInterval: number;
 }
 
 declare interface IBillCreateInfo {
@@ -98,18 +99,24 @@ declare interface IBillCreateInfo {
     proportion: number[];
     billName: string;
     descri: string;
-    isRecurrent:number;
-    isRecurrentDateTime:Date;
-    recurrentIntervl:number;
-    created_at:Date;
-    created_by:string;
+    isRecurrent: number;
+    isRecurrentDateTime: Date;
+    recurrentIntervl: number;
+    created_at: Date;
+    created_by: string;
 }
 
 declare interface IBillCreateResponse {
     id: numId;
 }
 
-declare interface IBillRecurrentUpdate{
-    id:numId;
-    newDate:Date;
+declare interface IBillRecurrentUpdate {
+    id: numId;
+    newDate: Date;
+}
+
+declare interface IBillProofUpload {
+    numId: numId;
+    billId: numId;
+    baseString: string;
 }

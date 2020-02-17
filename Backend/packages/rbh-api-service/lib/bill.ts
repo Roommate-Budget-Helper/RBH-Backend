@@ -2,7 +2,7 @@ import { ApiClient, HttpClient } from './http_client';
 
 export class BillApi extends ApiClient {
     public createBill = async (billInfo: IBillCreateInfo) =>
-        this.httpClient.request<boolean, IBillCreateInfo>('post', '/api/bill', billInfo);
+        this.httpClient.request<IBillCreateResponse, IBillCreateInfo>('post', '/api/bill', billInfo);
 
     public getBillByHome = async (homeId: numId) => this.httpClient.request<IBill[]>('get', `/api/bill/byhome?homeId=${homeId}`);
 
@@ -20,12 +20,14 @@ export class BillApi extends ApiClient {
     public getSharePlans = async (houseId: numId) =>
         this.httpClient.request<IBillSharePlan[]>('get', `/api/bill/shareplan?houseId=${houseId}`);
 
-    public getRecurrentBill = async (houseId: numId)=> this.httpClient.request<IBillRecurrent[]>('get', `/api/bill/recurrentbill?houseId=${houseId}`);
+    public getRecurrentBill = async (houseId: numId) =>
+        this.httpClient.request<IBillRecurrent[]>('get', `/api/bill/recurrentbill?houseId=${houseId}`);
 
-    public updateRecurrent = async (recurrent:IBillRecurrentUpdate)=> 
+    public updateRecurrent = async (recurrent: IBillRecurrentUpdate) =>
         this.httpClient.request<Boolean, IBillRecurrentUpdate>('post', '/api/bill/recurrentbill', recurrent);
 
-    
+    public uploadProofById = async (data: IBillProofUpload) =>
+        this.httpClient.request<Boolean, IBillProofUpload>('post', '/api/bill/proof', data);
 }
 
 export default (client: HttpClient) => new BillApi(client);

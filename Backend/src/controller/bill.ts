@@ -2,7 +2,7 @@ import { RequestHandler } from 'express';
 import * as Azure from '../../lib/driver/azure/index';
 
 export const createBill: RequestHandler = async (req, res) => {
-    const result: boolean = await Azure.bill.createBill(
+    const result: numId = await Azure.bill.createBill(
         req.body.ownerId,
         req.body.homeId,
         req.body.plannedSharedFlag,
@@ -21,7 +21,7 @@ export const createBill: RequestHandler = async (req, res) => {
         req.body.created_by
     );
 
-    return res.send(result);
+    return res.send({ id: result } as IBillCreateResponse);
 };
 
 export const getBillByHome: RequestHandler = async (req, res) => {
@@ -63,13 +63,22 @@ export const getRecurrentBill: RequestHandler = async (req, res) => {
 };
 
 export const editBillById: RequestHandler = async (req, res) => {
-    // console.info(req.body);
-    const result: Boolean = await Azure.bill.editBillById(req.body.bills);
+    const result: Boolean = await Azure.bill.editBillById(req.body);
     return res.send(result);
 };
 
-export const updateRecurrent: RequestHandler = async(req, res)=>{
-    console.info(req)
+export const updateRecurrent: RequestHandler = async (req, res) => {
     const result: Boolean = await Azure.bill.updateRecurrent(req.body.id, req.body.newDate);
     return res.send(result);
-}
+};
+
+export const getProofById: RequestHandler = async (req, res) => {
+    const result: FileList = await Azure.bill.getProofById(req.query.id);
+
+    return res.send(result);
+};
+
+export const uploadProofById: RequestHandler = async (req, res) => {
+    const result: Boolean = await Azure.bill.uploadProofById(req.body.numId, req.body.billId, req.body.baseString);
+    return res.send(result);
+};
