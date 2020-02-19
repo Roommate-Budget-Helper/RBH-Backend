@@ -17,7 +17,7 @@ export const createUser2Bill = async (
     for (let i = 0; i < roommates.length; i++) {
         var userId;
         // tslint:disable-next-line: no-floating-promises
-        runQuery(`SELECT id FROM dbo.users WHERE userName = \'${roommates[i]}\'`).then(async (result) => {
+        await runQuery(`SELECT id FROM dbo.users WHERE userName = \'${roommates[i]}\'`).then(async (result) => {
             userId = (result as IBillCreateResponse).id;
             console.info('userId', userId, roommates[i], roommates[i].length, result);
             await runQuery(`INSERT INTO dbo.users2bills (billId, userId, proportion, amount, proofFlag, isApproved)
@@ -27,7 +27,7 @@ export const createUser2Bill = async (
         // tslint:disable-next-line: no-floating-promises
         if (sharePlanid == -1) {
             // tslint:disable-next-line: no-floating-promises
-            runQueryGetOne(
+            await runQueryGetOne(
                 `INSERT INTO dbo.shareRatioId (sharePlansid, userName, ratio) VALUES (${planId}, \'${roommates[i]}\', ${proportion[i]})`
             );
         }
@@ -294,7 +294,8 @@ export const getProofById = async (users2bills: numId): Promise<FileList> => {
 };
 
 export const uploadProofById = async (userId: numId, billId: numId, baseString: string): Promise<Boolean> => {
+    console.info(userId,billId, baseString )
     return runQueryGetOne(`UPDATE dbo.users2bills
     SET proof = \'${baseString}\'
-    where userId = ${userId} and billId = ${billId}`);
+    where userId = \'${userId}\' and billId = \'${billId}\'`);
 };
