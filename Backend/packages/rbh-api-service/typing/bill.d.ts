@@ -15,7 +15,7 @@ declare interface IBill {
 }
 
 declare interface IBillDetail {
-    id: numId;
+    billId: numId;
     ownerId: numId;
     homeId: numId;
     plannedSharedFlag: number;
@@ -32,6 +32,7 @@ declare interface IBillDetail {
     userId: number;
     proportion: number;
     amount: number;
+    proof: string;
     userName: string;
 }
 
@@ -48,7 +49,7 @@ declare interface IUser2Bill {
     created_by: string;
     updated_at: Date;
     updated_by: string;
-    billName: string; 
+    billName: string;
     descri: string;
     isRecurrent: number;
 }
@@ -60,11 +61,30 @@ declare interface IBillShareRatioReturnValue {
     userName: string;
     ratio: number;
 }
+
+declare interface IBillRecurrentReturnValue {
+    id: numId;
+    billOwner: numId;
+    billDescri: string;
+    full_name: string;
+    isRecurentdatetime: Date;
+    recurrentInterval: number;
+}
 declare interface IBillSharePlan {
     id: numId;
     full_name: string;
     userName: string[];
     ratio: number[];
+}
+declare interface IBillRecurrent {
+    id: numId;
+    ownerId: numId;
+    full_name: string;
+    descri: string;
+    userName: string[];
+    ratio: number[];
+    isRecurentdatetime: Date;
+    recurrentInterval: number;
 }
 
 declare interface IBillCreateInfo {
@@ -79,11 +99,35 @@ declare interface IBillCreateInfo {
     proportion: number[];
     billName: string;
     descri: string;
-    isRecurrent:number;
-    created_at:Date;
-    created_by:string;
+    isRecurrent: number;
+    isRecurrentDateTime: Date;
+    recurrentIntervl: number;
+    created_at: Date;
+    created_by: string;
 }
 
 declare interface IBillCreateResponse {
     id: numId;
+}
+
+declare interface IBillRecurrentUpdate {
+    id: numId;
+    newDate: Date;
+}
+
+declare interface IBillProofUpload {
+    numId: numId;
+    billId: numId;
+    baseString: string;
+}
+
+declare interface IBillHistory {
+    ownerId: numId;
+    homeId: numId;
+    totalAmount:number;
+    currentID:numId;
+    billName:string;
+    descri:string;
+    created_at:Date;
+    created_by: string;
 }

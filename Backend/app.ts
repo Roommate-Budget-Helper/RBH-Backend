@@ -19,7 +19,8 @@ app.use(
     })
 );
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/api/session', Route.session);
 app.use('/api/home', Route.homes);
