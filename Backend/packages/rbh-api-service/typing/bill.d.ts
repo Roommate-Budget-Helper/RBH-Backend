@@ -120,3 +120,14 @@ declare interface IBillProofUpload {
     billId: numId;
     baseString: string;
 }
+
+declare interface IBillHistory {
+    ownerId: numId;
+    homeId: numId;
+    totalAmount:number;
+    currentID:numId;
+    billName:string;
+    descri:string;
+    created_at:Date;
+    created_by: string;
+}

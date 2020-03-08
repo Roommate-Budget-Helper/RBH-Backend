@@ -82,3 +82,21 @@ export const uploadProofById: RequestHandler = async (req, res) => {
     const result: Boolean = await Azure.bill.uploadProofById(req.body.numId, req.body.billId, req.body.baseString);
     return res.send(result);
 };
+
+export const getBillHistoryById: RequestHandler = async (req, res) => {
+    const result: IBillHistory[] = await Azure.bill.getBillHistoryById(req.query.billId);
+    return res.send(result);
+};
+
+export const createBillHistory: RequestHandler = async (req, res) => {
+    const result: Boolean = await Azure.bill.createBillHistory(
+        {ownerId: req.body.ownerId,
+        homeId: req.body.homeId,
+        totalAmount: req.body.totalAmount,
+        currentID: req.body.currentID,
+        billName: req.body.billName,
+        descri: req.body.descri,
+        created_at: req.body.created_at,
+        created_by: req.body.created_by});
+    return res.send(result);
+};

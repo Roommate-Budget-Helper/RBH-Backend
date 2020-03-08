@@ -28,6 +28,12 @@ export class BillApi extends ApiClient {
 
     public uploadProofById = async (data: IBillProofUpload) =>
         this.httpClient.request<Boolean, IBillProofUpload>('post', '/api/bill/proof', data);
+
+    public getBillHistoryById = async (billId: numId) =>
+    this.httpClient.request<IBillHistory[]>('get', `/api/bill/history?billId=${billId}`);
+
+    public createBillHistory = async (data: IBillHistory) =>
+    this.httpClient.request<Boolean, IBillHistory>('post', '/api/bill/history', data);
 }
 
 export default (client: HttpClient) => new BillApi(client);

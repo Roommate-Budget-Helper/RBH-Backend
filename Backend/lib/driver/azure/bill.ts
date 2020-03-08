@@ -299,3 +299,13 @@ export const uploadProofById = async (userId: numId, billId: numId, baseString: 
     SET proof = \'${baseString}\'
     where userId = \'${userId}\' and billId = \'${billId}\'`);
 };
+
+export const getBillHistoryById = async (billId: numId): Promise<IBillHistory[]> => {
+    return runQueryGetOne(`select * from dbo.billHistory where currentID = ${billId}`);
+};
+
+export const createBillHistory = async (billHistory: IBillHistory): Promise<Boolean> => {
+    return runQuery(`INSERT INTO dbo.billHistory (ownerId, homeId, totalAmount, currentID, billName, descri, created_at, created_by)
+    VALUES (${billHistory.ownerId}, ${billHistory.homeId}, ${billHistory.totalAmount}, ${billHistory.currentID},
+        ${billHistory.billName}, ${billHistory.descri}, ${billHistory.created_at}, ${billHistory.created_by})`);
+};
