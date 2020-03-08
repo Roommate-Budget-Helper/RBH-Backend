@@ -214,7 +214,8 @@ export const editBillById = async (billDetails: IBillDetail[]): Promise<Boolean>
         return runQueryGetOne(`
                         UPDATE dbo.bills
                         SET billName = \'${billDetail.billName}\',
-                        totalAmount = ${billDetail.totalAmount}
+                        totalAmount = ${billDetail.totalAmount},
+                        descri = \'${billDetail.descri}\'
                         where id = ${billDetail.billId}
 
                         update dbo.users2bills
@@ -305,7 +306,7 @@ export const getBillHistoryById = async (billId: numId): Promise<IBillHistory[]>
 };
 
 export const createBillHistory = async (billHistory: IBillHistory): Promise<Boolean> => {
-    return runQuery(`INSERT INTO dbo.billHistory (ownerId, homeId, totalAmount, currentID, billName, descri, created_at, created_by)
+    return runQueryGetOne(`INSERT INTO dbo.billHistory (ownerId, homeId, totalAmount, currentID, billName, descri, created_at, created_by)
     VALUES (${billHistory.ownerId}, ${billHistory.homeId}, ${billHistory.totalAmount}, ${billHistory.currentID},
-        ${billHistory.billName}, ${billHistory.descri}, ${billHistory.created_at}, ${billHistory.created_by})`);
+        \'${billHistory.billName}\', \'${billHistory.descri}\', \'${billHistory.created_at}\', \'${billHistory.created_by}\')`);
 };
