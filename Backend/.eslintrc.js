@@ -12,6 +12,7 @@ module.exports = {
     // project: __dirname + '/../../../tsconfig.json'
     project: __dirname + "/tsconfig.json"
   },
+  
   rules: {
     "prettier/prettier": [
       "error",

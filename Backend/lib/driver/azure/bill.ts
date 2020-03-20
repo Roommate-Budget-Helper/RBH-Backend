@@ -297,7 +297,7 @@ export const getProofById = async (users2bills: numId): Promise<FileList> => {
 export const uploadProofById = async (userId: numId, billId: numId, baseString: string): Promise<Boolean> => {
     console.info(userId,billId, baseString )
     return runQueryGetOne(`UPDATE dbo.users2bills
-    SET proof = \'${baseString}\'
+    SET proof = \'${baseString}\', proofFlag = 1
     where userId = \'${userId}\' and billId = \'${billId}\'`);
 };
 
