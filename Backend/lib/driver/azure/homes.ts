@@ -116,7 +116,7 @@ export const removeRoommate = async (userName: string, houseId: number): Promise
     WHERE dbo.users.userName=\'${userName}\' and dbo.User2Houses.HouseId=${houseId}`);
 };
 
-export const getUserbalanceByHome = async (username: string, homeId: string): Promise<number> => {
+export const getUserbalanceByHome = async (username: string, homeId: string): Promise<IUserBalanceResponse> => {
     return runQuery(`
             Declare @userId int
 
