@@ -16,3 +16,7 @@ declare interface IUser2Home {
     house_id: numId;
     roommates: string;
 }
+
+declare interface IUserBalanceResponse {
+    balance: number;
+}
