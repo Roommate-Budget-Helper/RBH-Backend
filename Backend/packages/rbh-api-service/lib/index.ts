@@ -4,6 +4,7 @@ import user from './user';
 import home from './home';
 import invitation from './invitation';
 import bill from './bill';
+import history from './history'
 
 export default class {
     private client: ReturnType<typeof HttpClient>;
@@ -26,5 +27,8 @@ export default class {
     }
     public get bill(){
         return bill(this.client);
+    }
+    public get history(){
+        return history(this.client);
     }
 }

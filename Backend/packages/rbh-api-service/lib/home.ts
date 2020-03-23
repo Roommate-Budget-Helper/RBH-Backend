@@ -10,6 +10,9 @@ export class HomeApi extends ApiClient {
 
     public removeRoommate = async (userName: string, houseId: numId) =>
         this.httpClient.request<Boolean>('delete', `/api/home?userName=${userName}&houseId=${houseId}`);
+
+    public getUserbalanceByHome = async (userName: string, houseId: numId) =>
+        this.httpClient.request<IUserBalanceResponse>('get', `/api/home/balance?userName=${userName}&houseId=${houseId}`);
 }
 
 export default (client: HttpClient) => new HomeApi(client);

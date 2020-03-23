@@ -106,6 +106,23 @@ declare interface IBillCreateInfo {
     created_by: string;
 }
 
+declare interface IBillIdResponse {
+    billId: numId;
+}
+
+declare interface IBillOwnerIdResponse {
+    ownerId: numId;
+}
+declare interface IBillUsernameResponse {
+    userName: string;
+}
+declare interface IBillUserIdResponse {
+    userId: numId;
+    amount: number;
+    proofFlag: boolean;
+
+}
+
 declare interface IBillCreateResponse {
     id: numId;
 }

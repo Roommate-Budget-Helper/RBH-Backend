@@ -109,10 +109,28 @@ export const getHomeDetail = async (houseId: number): Promise<IUserInfo[]> => {
     where HouseId = ${houseId}`);
 };
 
-export const removeRoommate = async (userName: string, houseId:number): Promise<Boolean> =>{
-    // return runQueryGetOne(`select * from dbo.User2Houses`)
+export const removeRoommate = async (userName: string, houseId: number): Promise<Boolean> => {
     return runQueryGetOne(`DELETE dbo.User2Houses FROM dbo.User2Houses 
     inner join dbo.users 
     on dbo.User2Houses.userId=dbo.users.id
-    WHERE dbo.users.userName=\'${userName}\' and dbo.User2Houses.HouseId=${houseId}`)
-}
+    WHERE dbo.users.userName=\'${userName}\' and dbo.User2Houses.HouseId=${houseId}`);
+};
+
+export const getUserbalanceByHome = async (username: string, homeId: string): Promise<IUserBalanceResponse> => {
+    return runQuery(`
+            Declare @userId int
+
+            select @userId = id
+            from users
+            where userName = \'${username}\'
+
+            Select SUM(amount) as balance
+            --Into   #Temp
+            From   bills
+            inner join users2bills
+            on bills.id = users2bills.billId
+            where bills.homeId =  ${homeId}
+            and userId = @userId 
+            and proofFlag = 0
+            and ownerId != @userId`);
+};

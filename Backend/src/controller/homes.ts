@@ -22,3 +22,8 @@ export const removeRoommate: RequestHandler = async (req, res) => {
     const result = await Azure.homes.removeRoommate(req.query.userName, req.query.houseId);
     return res.send(result);
 };
+
+export const getUserbalanceByHome: RequestHandler = async (req, res) => {
+    const balance = await Azure.homes.getUserbalanceByHome(req.query.userName, req.query.houseId);
+    return res.send(balance);
+};
