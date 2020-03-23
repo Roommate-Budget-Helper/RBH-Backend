@@ -210,12 +210,15 @@ export const getSharePlans = async (result: IBillSharePlanReturnValue[]): Promis
 };
 
 export const editBillById = async (billDetails: IBillDetail[]): Promise<Boolean> => {
+    let date:Date = new Date()
+    console.info(date.toISOString())
     billDetails.map((billDetail: IBillDetail) => {
         return runQueryGetOne(`
                         UPDATE dbo.bills
                         SET billName = \'${billDetail.billName}\',
                         totalAmount = ${billDetail.totalAmount},
-                        descri = \'${billDetail.descri}\'
+                        descri = \'${billDetail.descri}\',
+                        created_at = \'${date.toISOString()}\'
                         where id = ${billDetail.billId}
 
                         update dbo.users2bills
