@@ -144,3 +144,15 @@ export const deleteHome = async (houseId: number): Promise<Boolean> => {
             return false;
         });
 };
+
+export const transferOwner = async (houseId: number, userName: string): Promise<Boolean> => {
+    return runQueryGetOne(`UPDATE dbo.houses
+        SET admin_name = \'${userName}\'
+        WHERE id = ${houseId}`)
+        .then(() => {
+            return true;
+        })
+        .catch(() => {
+            return false;
+        });
+};

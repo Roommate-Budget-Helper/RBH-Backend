@@ -32,3 +32,8 @@ export const deleteHome: RequestHandler = async (req, res) => {
     const result = await Azure.homes.deleteHome(req.query.houseId);
     return res.send(result);
 };
+
+export const transferOwner: RequestHandler = async (req, res) => {
+    const result = await Azure.homes.transferOwner(req.query.houseId, req.query.userName);
+    return res.send(result);
+};
