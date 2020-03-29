@@ -134,3 +134,13 @@ export const getUserbalanceByHome = async (username: string, homeId: string): Pr
             and proofFlag = 0
             and ownerId != @userId`);
 };
+
+export const deleteHome = async (houseId: number): Promise<Boolean> => {
+    return runQueryGetOne(`DELETE FROM dbo.houses WHERE id = ${houseId}`)
+        .then(() => {
+            return true;
+        })
+        .catch(() => {
+            return false;
+        });
+};

@@ -10,5 +10,6 @@ router.get('/balance', asyncMiddleware(controller.getUserbalanceByHome));
 router.get('/detail', asyncMiddleware(controller.getHomeDetail));
 router.post('/', asyncMiddleware(controller.createHome));
 router.delete('/', asyncMiddleware(controller.removeRoommate));
+router.delete('/houseId', asyncMiddleware(controller.deleteHome));
 
 export default router;

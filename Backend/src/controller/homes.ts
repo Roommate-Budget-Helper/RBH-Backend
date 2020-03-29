@@ -27,3 +27,8 @@ export const getUserbalanceByHome: RequestHandler = async (req, res) => {
     const balance = await Azure.homes.getUserbalanceByHome(req.query.userName, req.query.houseId);
     return res.send(balance);
 };
+
+export const deleteHome: RequestHandler = async (req, res) => {
+    const result = await Azure.homes.deleteHome(req.query.houseId);
+    return res.send(result);
+};

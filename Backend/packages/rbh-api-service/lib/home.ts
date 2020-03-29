@@ -11,6 +11,8 @@ export class HomeApi extends ApiClient {
     public removeRoommate = async (userName: string, houseId: numId) =>
         this.httpClient.request<Boolean>('delete', `/api/home?userName=${userName}&houseId=${houseId}`);
 
+    public deleteHome = async (houseId: numId) => this.httpClient.request<Boolean>('delete', `/api/home/houseId?houseId=${houseId}`);
+
     public getUserbalanceByHome = async (userName: string, houseId: numId) =>
         this.httpClient.request<IUserBalanceResponse>('get', `/api/home/balance?userName=${userName}&houseId=${houseId}`);
 }
