@@ -11,8 +11,12 @@ export class HomeApi extends ApiClient {
     public removeRoommate = async (userName: string, houseId: numId) =>
         this.httpClient.request<Boolean>('delete', `/api/home?userName=${userName}&houseId=${houseId}`);
 
+    public deleteHome = async (houseId: numId) => this.httpClient.request<Boolean>('delete', `/api/home/houseId?houseId=${houseId}`);
+
     public getUserbalanceByHome = async (userName: string, houseId: numId) =>
         this.httpClient.request<IUserBalanceResponse>('get', `/api/home/balance?userName=${userName}&houseId=${houseId}`);
+    public transerOwnership = async (houseId: number, userName: string) =>
+        this.httpClient.request<Boolean>('put', `/api/home/transfer?houseId=${houseId}&userName=${userName}`);
 }
 
 export default (client: HttpClient) => new HomeApi(client);

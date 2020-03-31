@@ -12,7 +12,7 @@ export const getHistory = async (userId: numId): Promise<IHistoryResponse[]> => 
             await runQuery(`SELECT ownerId from dbo.bills where id = ${bills[i].billId}`).then(async ownerId => {
                 let isOwner = (ownerId as IBillOwnerIdResponse).ownerId == userId
                 // console.info(bills)
-                runQueryGetOne(`SELECT userId, amount, proofFlag from dbo.users2bills where billId = ${bills[i].billId}`).then(async ids=> {
+                await runQueryGetOne(`SELECT userId, amount, proofFlag from dbo.users2bills where billId = ${bills[i].billId}`).then(async ids=> {
 
                     let users = ids as IBillUserIdResponse[]
 

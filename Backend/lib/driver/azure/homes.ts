@@ -110,7 +110,8 @@ export const getHomeDetail = async (houseId: number): Promise<IUserInfo[]> => {
 };
 
 export const removeRoommate = async (userName: string, houseId: number): Promise<Boolean> => {
-    return runQueryGetOne(`DELETE dbo.User2Houses FROM dbo.User2Houses 
+    console.info(userName, houseId)
+    return runQueryGetOne(`DELETE dbo.User2Houses  FROM dbo.User2Houses 
     inner join dbo.users 
     on dbo.User2Houses.userId=dbo.users.id
     WHERE dbo.users.userName=\'${userName}\' and dbo.User2Houses.HouseId=${houseId}`);
@@ -133,4 +134,26 @@ export const getUserbalanceByHome = async (username: string, homeId: string): Pr
             and userId = @userId 
             and proofFlag = 0
             and ownerId != @userId`);
+};
+
+export const deleteHome = async (houseId: number): Promise<Boolean> => {
+    return runQueryGetOne(`DELETE FROM dbo.houses WHERE id = ${houseId}`)
+        .then(() => {
+            return true;
+        })
+        .catch(() => {
+            return false;
+        });
+};
+
+export const transferOwner = async (houseId: number, userName: string): Promise<Boolean> => {
+    return runQueryGetOne(`UPDATE dbo.houses
+        SET admin_name = \'${userName}\'
+        WHERE id = ${houseId}`)
+        .then(() => {
+            return true;
+        })
+        .catch(() => {
+            return false;
+        });
 };
