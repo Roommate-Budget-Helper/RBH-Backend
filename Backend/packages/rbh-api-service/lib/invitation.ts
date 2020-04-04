@@ -11,6 +11,8 @@ export class InvitationApi extends ApiClient {
 
     public declineInvitation = async (invitationId: numId) =>
         this.httpClient.request<Boolean>('delete', `/api/invitation/decline?id=${invitationId}`);
+
+    public getAllUsername = async () => this.httpClient.request<string[]>('get', '/api/invitation/allusers');
 }
 
 export default (client: HttpClient) => new InvitationApi(client);

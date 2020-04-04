@@ -64,3 +64,9 @@ export const declineInvitation = async (id: numId): Promise<Boolean> => {
             return false;
         });
 };
+
+export const getAllUsers = async (): Promise<any[]> => {
+    return runQueryGetOne(`
+    select distinct users.userName 
+    from dbo.users`);
+};
