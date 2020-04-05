@@ -84,7 +84,7 @@ export const createBill = async (
         request.input('billdescri', sql.VarChar, billdescri)
 
         await request.query(`INSERT INTO dbo.sharePlans (HouseId, isRecurent, isRecurentdatetime, recurrentInterval, billOwner, full_name,billDescri ) VALUES 
-        (@homeId, 1,@isRecurrentDateTime}, @recurrentInterval, @ownerId, @billname}, @billdescri})
+        (@homeId, 1,@isRecurrentDateTime, @recurrentInterval, @ownerId, @billname, @billdescri)
             SELECT id FROM dbo.sharePlans where id= (SELECT max(id) FROM dbo.sharePlans)`).then(async (planResult) => {
             planId = (planResult.recordset[0] as IBillCreateResponse).id;
 
@@ -399,14 +399,12 @@ export const getRecurrent = async (result: IBillRecurrentReturnValue[]): Promise
 
 export const updateRecurrent = async (planId: numId, newDate: Date): Promise<Boolean> => {
     const connection = await getConnection();
+    console.info(newDate, planId)
     const request = new sql.Request(connection);
     request.input('planId', sql.Int, planId);
     request.input('newDate', sql.Date, newDate);
-    return request.query(`UPDATE dbo.sharePlans SET isRecurentdatetime = @newDate' where id = @planId`).then(() => {
-        return true;
-    }).catch(() => {
-        return false;
-    });
+    await request.query(`UPDATE dbo.sharePlans SET isRecurentdatetime = @newDate where id = @planId`)
+    return true;
 };
 
 export const getProofById = async (users2bills: numId): Promise<FileList> => {
