@@ -282,9 +282,12 @@ export const editBillById = async (billDetails: IBillDetail[]): Promise<Boolean>
 };
 
 export const getRecurrentBill = async (houseId: numId): Promise<IBillRecurrent[]> => {
-    const returnValue: IBillRecurrentReturnValue[] = await runQueryGetOne(
-        `SELECT id,billOwner, billDescri, full_name, isRecurentdatetime, recurrentInterval from dbo.sharePlans where dbo.sharePlans.HouseId = ${houseId} and isRecurent = 1`
-    );
+    const connection = await getConnection();
+    const request = new sql.Request(connection);
+    request.input('houseId', sql.Int, houseId);
+    const returnValue: IBillRecurrentReturnValue[] = (await request.query(
+        `SELECT id,billOwner, billDescri, full_name, isRecurentdatetime, recurrentInterval from dbo.sharePlans where dbo.sharePlans.HouseId = @houseId and isRecurent = 1`
+    )).recordset;
     const recurrentBills: IBillRecurrent[] = await getRecurrent(returnValue);
 
     return recurrentBills;
