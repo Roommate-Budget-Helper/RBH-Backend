@@ -300,16 +300,19 @@ export const getRecurrent = async (result: IBillRecurrentReturnValue[]): Promise
     if (!result) {
         return Recurrentbills;
     }
+    const connection = await getConnection();
+    const request = new sql.Request(connection);
     var promises = result.map((element) => {
         id.push(element.id);
         name.push(element.full_name);
-        return runQueryGetOne(`SELECT dbo.shareRatioId.userName, dbo.shareRatioId.ratio FROM dbo.shareRatioId
-                where dbo.shareRatioId.sharePlansid = ${element.id}`)
+        request.input('elementId', sql.Int, element.id);
+        return request.query(`SELECT dbo.shareRatioId.userName, dbo.shareRatioId.ratio FROM dbo.shareRatioId
+                where dbo.shareRatioId.sharePlansid = @elementId`)
             .then((ratios) => {
                 if (!ratios) {
                     return Recurrentbills;
                 }
-                (ratios as IBillShareRatioReturnValue[]).forEach((pair) => {
+                (ratios.recordset as IBillShareRatioReturnValue[]).forEach((pair) => {
                     roommates.push(pair.userName);
                     prop.push(pair.ratio);
                 });
@@ -340,28 +343,61 @@ export const getRecurrent = async (result: IBillRecurrentReturnValue[]): Promise
 };
 
 export const updateRecurrent = async (planId: numId, newDate: Date): Promise<Boolean> => {
-    runQueryGetOne(`UPDATE dbo.sharePlans SET isRecurentdatetime = \'${newDate}\' where id = ${planId}`);
-
-    return true;
+    const connection = await getConnection();
+    const request = new sql.Request(connection);
+    request.input('planId', sql.Int, planId);
+    request.input('newDate', sql.Date, newDate);
+    return request.query(`UPDATE dbo.sharePlans SET isRecurentdatetime = @newDate' where id = @planId`).then(() => {
+        return true;
+    }).catch(() => {
+        return false;
+    });
 };
 
 export const getProofById = async (users2bills: numId): Promise<FileList> => {
-    return runQuery(`SELECT proof FROM dbo.users2bills WHERE id = ${users2bills}`);
+    const connection = await getConnection();
+    const request = new sql.Request(connection);
+    request.input('users2bills', sql.Int, users2bills);
+    return (await request.query(`SELECT proof FROM dbo.users2bills WHERE id = @users2bills`)).recordset[0];
 };
 
 export const uploadProofById = async (userId: numId, billId: numId, baseString: string): Promise<Boolean> => {
-    console.info(userId, billId, baseString)
-    return runQueryGetOne(`UPDATE dbo.users2bills
-    SET proof = \'${baseString}\', proofFlag = 1
-    where userId = \'${userId}\' and billId = \'${billId}\'`);
+    const connection = await getConnection();
+    const request = new sql.Request(connection);
+    request.input('billId', sql.Int, billId);
+    request.input('userId', sql.Int, userId);
+    request.input('baseString', sql.VarChar, baseString);
+    return request.query(`UPDATE dbo.users2bills
+    SET proof = @baseString, proofFlag = 1
+    where userId = @userId and billId = @billId`).then(() => {
+        return true;
+    }).catch(() => {
+        return false;
+    });
 };
 
 export const getBillHistoryById = async (billId: numId): Promise<IBillHistory[]> => {
-    return runQueryGetOne(`select * from dbo.billHistory where currentID = ${billId}`);
+    const connection = await getConnection();
+    const request = new sql.Request(connection);
+    request.input('billId', sql.Int, billId);
+    return (await request.query(`select * from dbo.billHistory where currentID = @billId`)).recordset;
 };
 
 export const createBillHistory = async (billHistory: IBillHistory): Promise<Boolean> => {
-    return runQueryGetOne(`INSERT INTO dbo.billHistory (ownerId, homeId, totalAmount, currentID, billName, descri, created_at, created_by)
-    VALUES (${billHistory.ownerId}, ${billHistory.homeId}, ${billHistory.totalAmount}, ${billHistory.currentID},
-        \'${billHistory.billName}\', \'${billHistory.descri}\', \'${billHistory.created_at}\', \'${billHistory.created_by}\')`);
+    const connection = await getConnection();
+    const request = new sql.Request(connection);
+    request.input('ownerId', sql.Int, billHistory.ownerId);
+    request.input('homeId', sql.Int, billHistory.homeId);
+    request.input('totalAmount', sql.Float, billHistory.totalAmount);
+    request.input('currentID', sql.Int, billHistory.currentID);
+    request.input('billName', sql.VarChar, billHistory.billName);
+    request.input('descri', sql.VarChar, billHistory.descri);
+    request.input('created_at', sql.Date, billHistory.created_at);
+    request.input('created_by', sql.VarChar, billHistory.created_by);
+    return request.query(`INSERT INTO dbo.billHistory (ownerId, homeId, totalAmount, currentID, billName, descri, created_at, created_by)
+    VALUES (@ownerId, @homeId, @totalAmount, @currentID,@billName, @descri, @created_at, @created_by)`).then(()=>{
+        return true;
+    }).catch(() => {
+        return false;
+    })
 };
