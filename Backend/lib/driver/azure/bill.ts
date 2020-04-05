@@ -1,9 +1,14 @@
-import { runQuery, runQueryGetOne } from './azure';
+import { runQuery, runQueryGetOne, getConnection } from './azure';
 import * as _ from 'lodash';
-import fs from 'fs';
+import sql from 'mssql';
+import { request } from 'express';
+
 
 export const getBillByHome = async (homeId: numId): Promise<IBill[]> => {
-    return runQueryGetOne(`select * from dbo.bills where homeId = ${homeId}`);
+    const connection = await getConnection()
+    const request = new sql.Request(connection)
+    request.input('homeId', sql.Int, homeId)
+    return (await request.query(`select * from dbo.bills where homeId = @homeId`)).recordset;
 };
 
 export const createUser2Bill = async (
@@ -14,21 +19,34 @@ export const createUser2Bill = async (
     sharePlanid: number,
     planId: number
 ) => {
+    const connection = await getConnection()
     for (let i = 0; i < roommates.length; i++) {
         var userId;
+        const request = new sql.Request(connection)
+        request.input('roommate', sql.VarChar, roommates[i])
         // tslint:disable-next-line: no-floating-promises
-        await runQuery(`SELECT id FROM dbo.users WHERE userName = \'${roommates[i]}\'`).then(async (result) => {
-            userId = (result as IBillCreateResponse).id;
+        await request.query(`SELECT id FROM dbo.users WHERE userName = @roommate`).then(async (result) => {
+            userId = (result.recordset[0] as IBillCreateResponse).id;
+            const request1 = new sql.Request(connection)
+            request1.input('billId', sql.Int, billId)
+            request1.input('userId', sql.Int, userId)
+            request1.input('proportion', sql.Int, proportion[i])
+            request1.input('amount', sql.Int, amount[i])
+
             console.info('userId', userId, roommates[i], roommates[i].length, result);
-            await runQuery(`INSERT INTO dbo.users2bills (billId, userId, proportion, amount, proofFlag, isApproved)
-            VALUES (${billId}, ${userId}, ${proportion[i]}, ${amount[i]}, 0, 0)
+            await request1.query(`INSERT INTO dbo.users2bills (billId, userId, proportion, amount, proofFlag, isApproved)
+            VALUES (@billId, @userId, @proportion, @amount, 0, 0)
             SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills)`);
         });
         // tslint:disable-next-line: no-floating-promises
         if (sharePlanid == -1) {
             // tslint:disable-next-line: no-floating-promises
-            await runQueryGetOne(
-                `INSERT INTO dbo.shareRatioId (sharePlansid, userName, ratio) VALUES (${planId}, \'${roommates[i]}\', ${proportion[i]})`
+            const request2 = new sql.Request(connection)
+            request2.input('planId', sql.Int, planId)
+            request2.input('roommate', sql.VarChar, roommates[i])
+            request2.input('proportion', sql.Int, proportion[i])
+            await request2.query(
+                `INSERT INTO dbo.shareRatioId (sharePlansid, userName, ratio) VALUES (@planId, @roommate, @proportion)`
             );
         }
     }
@@ -54,16 +72,29 @@ export const createBill = async (
 ): Promise<numId> => {
     var billId = 0;
     var planId: number;
+    const connection = await getConnection()
     // if this is not stored as a shared plan, the plannedSharedFlag from frontend would be 0
     if (isRecurrent == 1) {
-        await runQuery(`INSERT INTO dbo.sharePlans (HouseId, isRecurent, isRecurentdatetime, recurrentInterval, billOwner, full_name,billDescri ) VALUES 
-        (${homeId}, 1,\'${isRecurrentDateTime}\', ${recurrentInterval}, ${ownerId}, \'${billname}\', \'${billdescri}\' )
+        const request = new sql.Request(connection)
+        request.input('homeId', sql.Int, homeId)
+        request.input('isRecurrentDateTime', sql.Date, isRecurrentDateTime)
+        request.input('recurrentInterval', sql.Int, recurrentInterval)
+        request.input('ownerId', sql.Int, ownerId)
+        request.input('billName', sql.VarChar, billname)
+        request.input('billdescri', sql.VarChar, billdescri)
+
+        await request.query(`INSERT INTO dbo.sharePlans (HouseId, isRecurent, isRecurentdatetime, recurrentInterval, billOwner, full_name,billDescri ) VALUES 
+        (@homeId, 1,@isRecurrentDateTime}, @recurrentInterval, @ownerId, @billname}, @billdescri})
             SELECT id FROM dbo.sharePlans where id= (SELECT max(id) FROM dbo.sharePlans)`).then(async (planResult) => {
-            planId = (planResult as IBillCreateResponse).id;
+            planId = (planResult.recordset[0] as IBillCreateResponse).id;
 
             for (let i = 0; i < roommates.length; i++) {
-                await runQueryGetOne(
-                    `INSERT INTO dbo.shareRatioId (sharePlansid, userName, ratio) VALUES (${planId}, \'${roommates[i]}\', ${proportion[i]})`
+                const request1 = new sql.Request(connection)
+                request1.input('planId', sql.Int, planId)
+                request1.input('roommate', sql.VarChar, roommates[i])
+                request1.input('proportion', sql.Int, proportion[i])
+                await request1.query(
+                    `INSERT INTO dbo.shareRatioId (sharePlansid, userName, ratio) VALUES (@planId, @roommate, @proportion)`
                 );
             }
         });
@@ -72,22 +103,43 @@ export const createBill = async (
 
     if (plannedSharedFlag == 0) {
         // tslint:disable-next-line: no-floating-promises
-        await runQuery(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, totalAmount, isResolved, billName, descri,isRecurrent,  created_at, created_by)
-        VALUES (${ownerId},${homeId},${plannedSharedFlag},${totalAmount},0, \'${billname}\', \'${billdescri}\',${isRecurrent}, \'${created_at}\', \'${created_by}\')
+        const request2 = new sql.Request(connection)
+        request2.input('homeId', sql.Int, homeId)
+        request2.input('plannedSharedFlag', sql.Int, plannedSharedFlag)
+        request2.input('totalAmount', sql.Int, totalAmount)
+        request2.input('ownerId', sql.Int, ownerId)
+        request2.input('billName', sql.VarChar, billname)
+        request2.input('billdescri', sql.VarChar, billdescri)
+        request2.input('isRecurrent', sql.Int, isRecurrent)
+        request2.input('created_at', sql.Date, created_at)
+        request2.input('created_by', sql.VarChar, created_by)
+
+        await request.query(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, totalAmount, isResolved, billName, descri,isRecurrent,  created_at, created_by)
+        VALUES (@ownerId,@homeId,@plannedSharedFlag,@totalAmount,0, @billname,@billdescri,@isRecurrent, @created_at,@created_by)
         SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills)`).then(async (result) => {
-            billId = (result as IBillCreateResponse).id;
+            billId = (result.recordset[0] as IBillCreateResponse).id;
             await createUser2Bill(billId, roommates, amount, proportion, 0, 0);
         });
     } else {
         // if this is a newly created shareplan, the sharePlanid from frontend would be -1
 
         if (sharePlanid == -1) {
+
             await runQuery(`INSERT INTO dbo.sharePlans (full_name, HouseId, isRecurent) VALUES (\'${full_name}\', ${homeId}, 0)
             SELECT id FROM dbo.sharePlans where id= (SELECT max(id) FROM dbo.sharePlans)`).then(async (planResult) => {
                 planId = (planResult as IBillCreateResponse).id;
-
+                const request3 = new sql.Request(connection)
+                request3.input('homeId', sql.Int, homeId)
+                request3.input('plannedSharedFlag', sql.Int, plannedSharedFlag)
+                request3.input('totalAmount', sql.Int, totalAmount)
+                request3.input('ownerId', sql.Int, ownerId)
+                request3.input('billName', sql.VarChar, billname)
+                request3.input('billdescri', sql.VarChar, billdescri)
+                request3.input('isRecurrent', sql.Int, isRecurrent)
+                request3.input('created_at', sql.Date, created_at)
+                request3.input('created_by', sql.VarChar, created_by)
                 await runQuery(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved, billName, descri, created_at, created_by)
-                VALUES (${ownerId},${homeId},${plannedSharedFlag},${planId},${totalAmount},0, \'${billname}\', \'${billdescri}\', \'${created_at}\', \'${created_by}\')
+                VALUES (@ownerId,@homeId,@plannedSharedFlag,@planId,@totalAmount,0, @billname, @billdescri, @created_at, @created_by)
                 SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills)`).then(async (billResult) => {
                     billId = (billResult as IBillCreateResponse).id;
 
@@ -210,7 +262,7 @@ export const getSharePlans = async (result: IBillSharePlanReturnValue[]): Promis
 };
 
 export const editBillById = async (billDetails: IBillDetail[]): Promise<Boolean> => {
-    let date:Date = new Date()
+    let date: Date = new Date()
     console.info(date.toISOString())
     billDetails.map((billDetail: IBillDetail) => {
         return runQueryGetOne(`
@@ -298,7 +350,7 @@ export const getProofById = async (users2bills: numId): Promise<FileList> => {
 };
 
 export const uploadProofById = async (userId: numId, billId: numId, baseString: string): Promise<Boolean> => {
-    console.info(userId,billId, baseString )
+    console.info(userId, billId, baseString)
     return runQueryGetOne(`UPDATE dbo.users2bills
     SET proof = \'${baseString}\', proofFlag = 1
     where userId = \'${userId}\' and billId = \'${billId}\'`);
