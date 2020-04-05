@@ -30,8 +30,8 @@ export const createUser2Bill = async (
             const request1 = new sql.Request(connection)
             request1.input('billId', sql.Int, billId)
             request1.input('userId', sql.Int, userId)
-            request1.input('proportion', sql.Int, proportion[i])
-            request1.input('amount', sql.Int, amount[i])
+            request1.input('proportion', sql.Float, proportion[i])
+            request1.input('amount', sql.Float, amount[i])
 
             console.info('userId', userId, roommates[i], roommates[i].length, result);
             await request1.query(`INSERT INTO dbo.users2bills (billId, userId, proportion, amount, proofFlag, isApproved)
@@ -44,7 +44,7 @@ export const createUser2Bill = async (
             const request2 = new sql.Request(connection)
             request2.input('planId', sql.Int, planId)
             request2.input('roommate', sql.VarChar, roommates[i])
-            request2.input('proportion', sql.Int, proportion[i])
+            request2.input('proportion', sql.Float, proportion[i])
             await request2.query(
                 `INSERT INTO dbo.shareRatioId (sharePlansid, userName, ratio) VALUES (@planId, @roommate, @proportion)`
             );
@@ -92,7 +92,7 @@ export const createBill = async (
                 const request1 = new sql.Request(connection)
                 request1.input('planId', sql.Int, planId)
                 request1.input('roommate', sql.VarChar, roommates[i])
-                request1.input('proportion', sql.Int, proportion[i])
+                request1.input('proportion', sql.Float, proportion[i])
                 await request1.query(
                     `INSERT INTO dbo.shareRatioId (sharePlansid, userName, ratio) VALUES (@planId, @roommate, @proportion)`
                 );
@@ -106,15 +106,15 @@ export const createBill = async (
         const request2 = new sql.Request(connection)
         request2.input('homeId', sql.Int, homeId)
         request2.input('plannedSharedFlag', sql.Int, plannedSharedFlag)
-        request2.input('totalAmount', sql.Int, totalAmount)
+        request2.input('totalAmount', sql.Float, totalAmount)
         request2.input('ownerId', sql.Int, ownerId)
         request2.input('billName', sql.VarChar, billname)
         request2.input('billdescri', sql.VarChar, billdescri)
-        request2.input('isRecurrent', sql.Int, isRecurrent)
+        request2.input('isRecurrent', sql.Bit, isRecurrent)
         request2.input('created_at', sql.Date, created_at)
         request2.input('created_by', sql.VarChar, created_by)
 
-        await request.query(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, totalAmount, isResolved, billName, descri,isRecurrent,  created_at, created_by)
+        await request2.query(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, totalAmount, isResolved, billName, descri,isRecurrent,  created_at, created_by)
         VALUES (@ownerId,@homeId,@plannedSharedFlag,@totalAmount,0, @billname,@billdescri,@isRecurrent, @created_at,@created_by)
         SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills)`).then(async (result) => {
             billId = (result.recordset[0] as IBillCreateResponse).id;
@@ -124,35 +124,46 @@ export const createBill = async (
         // if this is a newly created shareplan, the sharePlanid from frontend would be -1
 
         if (sharePlanid == -1) {
-
-            await runQuery(`INSERT INTO dbo.sharePlans (full_name, HouseId, isRecurent) VALUES (\'${full_name}\', ${homeId}, 0)
+            const request4 = new sql.Request(connection)
+            request4.input('homeId', sql.Int, homeId)
+            request4.input('full_name', sql.VarChar, full_name)
+            await request4.query(`INSERT INTO dbo.sharePlans (full_name, HouseId, isRecurent) VALUES (@full_name, @homeId, 0)
             SELECT id FROM dbo.sharePlans where id= (SELECT max(id) FROM dbo.sharePlans)`).then(async (planResult) => {
-                planId = (planResult as IBillCreateResponse).id;
+                planId = (planResult.recordset[0] as IBillCreateResponse).id;
                 const request3 = new sql.Request(connection)
                 request3.input('homeId', sql.Int, homeId)
                 request3.input('plannedSharedFlag', sql.Int, plannedSharedFlag)
-                request3.input('totalAmount', sql.Int, totalAmount)
+                request3.input('totalAmount', sql.Float, totalAmount)
                 request3.input('ownerId', sql.Int, ownerId)
                 request3.input('billName', sql.VarChar, billname)
                 request3.input('billdescri', sql.VarChar, billdescri)
-                request3.input('isRecurrent', sql.Int, isRecurrent)
+                request3.input('planId', sql.Int, planId)
                 request3.input('created_at', sql.Date, created_at)
                 request3.input('created_by', sql.VarChar, created_by)
-                await runQuery(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved, billName, descri, created_at, created_by)
+                await request3.query(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved, billName, descri, created_at, created_by)
                 VALUES (@ownerId,@homeId,@plannedSharedFlag,@planId,@totalAmount,0, @billname, @billdescri, @created_at, @created_by)
                 SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills)`).then(async (billResult) => {
-                    billId = (billResult as IBillCreateResponse).id;
-
+                    billId = (billResult.recordset[0] as IBillCreateResponse).id;
                     await createUser2Bill(billId, roommates, amount, proportion, sharePlanid, planId);
                 });
             });
         }
         //else it would be a used shareplan
         else {
-            await runQuery(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved,billName, descri, created_at, created_by)
-        VALUES (${ownerId},${homeId},${plannedSharedFlag},${sharePlanid},${totalAmount},0, \'${billname}\', \'${billdescri}\', \'${created_at}\', \'${created_by}\')
-        SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills)`).then(async (result) => {
-                billId = (result as IBillCreateResponse).id;
+            const request5 = new sql.Request(connection)
+            request5.input('homeId', sql.Int, homeId)
+            request5.input('plannedSharedFlag', sql.Int, plannedSharedFlag)
+            request5.input('totalAmount', sql.Float, totalAmount)
+            request5.input('ownerId', sql.Int, ownerId)
+            request5.input('billName', sql.VarChar, billname)
+            request5.input('billdescri', sql.VarChar, billdescri)
+            request5.input('planId', sql.Int, sharePlanid)
+            request5.input('created_at', sql.Date, created_at)
+            request5.input('created_by', sql.VarChar, created_by)
+            await request5.query(`INSERT INTO dbo.bills (ownerId, homeId, plannedSharedFlag, sharePlanid, totalAmount, isResolved,billName, descri, created_at, created_by)
+            VALUES (@ownerId,@homeId,@plannedSharedFlag,@planId,@totalAmount,0, @billname, @billdescri, @created_at, @created_by)
+            SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills)`).then(async (result) => {
+                billId = (result.recordset[0] as IBillCreateResponse).id;
                 await createUser2Bill(billId, roommates, amount, proportion, sharePlanid, 0);
             });
         }
@@ -162,15 +173,21 @@ export const createBill = async (
 };
 
 export const getBillByUser = async (userId: numId): Promise<IBill[]> => {
-    return runQuery(`select dbo.bills.*
+    const connection = await getConnection()
+    const request = new sql.Request(connection)
+    request.input('userId', sql.Int, userId)
+    return (await request.query(`select dbo.bills.*
     from dbo.bills 
     inner join dbo.users2bills 
     on dbo.bills.id = dbo.users2bills.billId 
-    where dbo.users2bills.userId = ${userId}`);
+    where dbo.users2bills.userId = @userId`)).recordset[0];
 };
 
 export const getBillById = async (billId: numId): Promise<IBillDetail[]> => {
-    return runQueryGetOne(`
+    const connection = await getConnection()
+    const request = new sql.Request(connection)
+    request.input('billId', sql.Int, billId)
+    return (await request.query(`
                         WITH cte_bill_house (billId, ownerId, homeId, sharePlanid, totalAmount, billName,
                         descri,created_at,user2billId, userId,proportion, amount, proof) AS (
                         SELECT
@@ -199,26 +216,43 @@ export const getBillById = async (billId: numId): Promise<IBillDetail[]> => {
                         from cte_bill_house
                         inner join dbo.users
                         on dbo.users.id = cte_bill_house.userId
-                        where billId=${billId}`);
+                        where billId=@billId`)).recordset;
 };
 
 export const deleteBill = async (billid: numId): Promise<Boolean> => {
     // console.log(billid);
-    return runQueryGetOne(`
-    DELETE FROM dbo.users2bills where billId = ${billid}
-    DELETE FROM dbo.bills WHERE id = ${billid}`);
+    const connection = await getConnection()
+    const request = new sql.Request(connection)
+    request.input('billId', sql.Int, billid)
+    return request.query(`
+    DELETE FROM dbo.users2bills where billId = @billId
+    DELETE FROM dbo.bills WHERE id = @billId`).then(()=>{
+        return true
+    }).catch (()=>{
+        return false
+    });
 };
 
 export const markAsResolved = async (billid: numId): Promise<Boolean> => {
-    return runQuery(`UPDATE dbo.bills
+    const connection = await getConnection()
+    const request = new sql.Request(connection)
+    request.input('billId', sql.Int, billid)
+    return request.query(`UPDATE dbo.bills
         SET isResolved = 1
-        WHERE id = ${billid}`);
+        WHERE id = @billId`).then(()=>{
+            return true
+        }).catch (()=>{
+            return false
+        });
 };
 
 export const getSharePlanValue = async (houseId: numId): Promise<IBillSharePlan[]> => {
-    const returnValue: IBillSharePlanReturnValue[] = await runQueryGetOne(
+    const connection = await getConnection()
+    const request = new sql.Request(connection)
+    request.input('houseId', sql.Int, houseId)
+    const returnValue: IBillSharePlanReturnValue[] = (await request.query(
         `SELECT id, full_name from dbo.sharePlans where dbo.sharePlans.HouseId = ${houseId} and isRecurent = 0`
-    );
+    )).recordset;
     const sharePlans: IBillSharePlan[] = await getSharePlans(returnValue);
     return sharePlans;
 };
@@ -232,16 +266,20 @@ export const getSharePlans = async (result: IBillSharePlanReturnValue[]): Promis
     if (!result) {
         return sharePlans;
     }
+    const connection = await getConnection()
+
     var promises = result.map((element) => {
         id.push(element.id);
         name.push(element.full_name);
-        return runQueryGetOne(`SELECT dbo.shareRatioId.userName, dbo.shareRatioId.ratio FROM dbo.shareRatioId
-                where dbo.shareRatioId.sharePlansid = ${id[id.length - 1]}`)
+    const request = new sql.Request(connection)
+    request.input('id', sql.Int, id[id.length-1])
+        return request.query(`SELECT dbo.shareRatioId.userName, dbo.shareRatioId.ratio FROM dbo.shareRatioId
+                where dbo.shareRatioId.sharePlansid = @id`)
             .then((ratios) => {
                 if (!ratios) {
                     return sharePlans;
                 }
-                (ratios as IBillShareRatioReturnValue[]).forEach((pair) => {
+                (ratios.recordset as IBillShareRatioReturnValue[]).forEach((pair) => {
                     roommates.push(pair.userName);
                     prop.push(pair.ratio);
                 });
@@ -264,19 +302,33 @@ export const getSharePlans = async (result: IBillSharePlanReturnValue[]): Promis
 export const editBillById = async (billDetails: IBillDetail[]): Promise<Boolean> => {
     let date: Date = new Date()
     console.info(date.toISOString())
+    const connection = await getConnection()
+    
     billDetails.map((billDetail: IBillDetail) => {
-        return runQueryGetOne(`
+        const request = new sql.Request(connection)
+    request.input('billName', sql.VarChar, billDetail.billName)
+    request.input('amount', sql.VarChar, billDetail.totalAmount)
+    request.input('descri', sql.VarChar, billDetail.descri)
+    request.input('created_at', sql.Date, date.toISOString())
+    request.input('id', sql.Int, billDetail.billId)
+    request.input('proportion', sql.Float, billDetail.proportion)
+    request.input('amoun', sql.Int, billDetail.totalAmount*billDetail.proportion)
+    request.input('userId', sql.Int, billDetail.userId)
+
+        return request.query(`
                         UPDATE dbo.bills
-                        SET billName = \'${billDetail.billName}\',
-                        totalAmount = ${billDetail.totalAmount},
-                        descri = \'${billDetail.descri}\',
-                        created_at = \'${date.toISOString()}\'
-                        where id = ${billDetail.billId}
+                        SET billName = @billName,
+                        totalAmount = @amount,
+                        descri = @descri,
+                        created_at = @created_at
+                        where id = @id
 
                         update dbo.users2bills
-                        set proportion = ${billDetail.proportion},
-                        amount = ${billDetail.totalAmount}*${billDetail.proportion}
-                        where billId = ${billDetail.billId} and userId = ${billDetail.userId}`);
+                        set proportion = @proportion,
+                        amount = @amoun
+                        where billId = @id and userId = @userId`).then((res)=>{
+                            return res.recordset
+                        });
     });
     return true;
 };
