@@ -1,23 +1,32 @@
-import { runQuery, runQueryGetOne } from './azure';
+import { getConnection } from './azure';
 import * as _ from 'lodash';
 import { promises } from 'dns';
+import sql from 'mssql';
 
 export const insertHomeInfo = async (fullname: string, adminname: string, adminid: numId): Promise<Record<string, numId>> => {
-    return runQuery(
-        `INSERT INTO dbo.houses(full_name, admin_name, admin_id) VALUES (\'${fullname}\', \'${adminname}\', \'${adminid}\');
+    const connection = await getConnection();
+    const request = new sql.Request(connection);
+    request.input('fullname', sql.VarChar, fullname);
+    request.input('adminname', sql.VarChar, adminname);
+    request.input('adminid', sql.Int, adminid);
+    return (await request.query(
+        `INSERT INTO dbo.houses(full_name, admin_name, admin_id) VALUES (@fullname, @adminname, @adminid);
         declare @tempHouseId int;
         select @tempHouseId = MAX(dbo.houses.id)
         from dbo.houses
-        where full_name = \'${fullname}\' and admin_name = \'${adminname}\' and admin_id = \'${adminid}\'
+        where full_name = @fullname and admin_name = @adminname and admin_id = @adminid
 
-        INSERT INTO dbo.User2Houses(HouseId,userId) VALUES (@tempHouseId, \'${adminid}\');
+        INSERT INTO dbo.User2Houses(HouseId,userId) VALUES (@tempHouseId, @adminid);
         SELECT id FROM dbo.houses where id= (SELECT max(id) FROM dbo.houses);
         `
-    );
+    )).recordset[0];
 };
 
 export const getHomeInfo = async (userId: number): Promise<IUser2Home[]> => {
-    return runQueryGetOne(`declare @Max as int
+    const connection = await getConnection();
+    const request = new sql.Request(connection);
+    request.input('userId', sql.Int, userId);
+    return (await request.query(`declare @Max as int
     declare @Current as int
     declare @tempHouseId as int
     declare @res as varchar(511)
@@ -39,7 +48,7 @@ export const getHomeInfo = async (userId: number): Promise<IUser2Home[]> => {
     where 
     
         
-        dbo.User2Houses.userId = ${userId}
+        dbo.User2Houses.userId = @userId
         
     
     
@@ -98,62 +107,79 @@ export const getHomeInfo = async (userId: number): Promise<IUser2Home[]> => {
         select @Current = @Current+1;
     
       End
-      select * from #temp_HouseInfo_Users`);
+      select * from #temp_HouseInfo_Users`)).recordset;
 };
 
 export const getHomeDetail = async (houseId: number): Promise<IUserInfo[]> => {
-    return runQueryGetOne(`select dbo.users.*
+    const connection = await getConnection();
+    const request = new sql.Request(connection);
+    request.input('houseId', sql.Int, houseId);
+    return (await request.query(`select dbo.users.*
     from dbo.User2Houses
     inner join dbo.users
     on dbo.User2Houses.userId = dbo.users.id
-    where HouseId = ${houseId}`);
+    where HouseId = @houseId`)).recordset;
 };
 
 export const removeRoommate = async (userName: string, houseId: number): Promise<Boolean> => {
-    console.info(userName, houseId)
-    return runQueryGetOne(`DELETE dbo.User2Houses  FROM dbo.User2Houses 
+    const connection = await getConnection();
+    const request = new sql.Request(connection);
+    request.input('userName', sql.VarChar, userName);
+    request.input('houseId', sql.Int, houseId);
+    return (await request.query(`DELETE dbo.User2Houses  FROM dbo.User2Houses 
     inner join dbo.users 
     on dbo.User2Houses.userId=dbo.users.id
-    WHERE dbo.users.userName=\'${userName}\' and dbo.User2Houses.HouseId=${houseId}`);
+    WHERE dbo.users.userName=@userName and dbo.User2Houses.HouseId=@houseId`)).recordset as any;
 };
 
 export const getUserbalanceByHome = async (username: string, homeId: string): Promise<IUserBalanceResponse> => {
-    return runQuery(`
+    const connection = await getConnection();
+    const request = new sql.Request(connection);
+    request.input('username', sql.VarChar, username);
+    request.input('homeId', sql.VarChar, homeId);
+    return (await request.query(`
             Declare @userId int
 
             select @userId = id
             from users
-            where userName = \'${username}\'
+            where userName = @username
 
             Select SUM(amount) as balance
             --Into   #Temp
             From   bills
             inner join users2bills
             on bills.id = users2bills.billId
-            where bills.homeId =  ${homeId}
+            where bills.homeId =  @homeId
             and userId = @userId 
             and proofFlag = 0
-            and ownerId != @userId`);
+            and ownerId != @userId`)).recordset[0];
 };
 
 export const deleteHome = async (houseId: number): Promise<Boolean> => {
-    return runQueryGetOne(`DELETE FROM dbo.houses WHERE id = ${houseId}`)
+    const connection = await getConnection();
+    const request = new sql.Request(connection);
+    request.input('houseId', sql.Int, houseId);
+    return (request.query(`DELETE FROM dbo.houses WHERE id = @houseId`)
         .then(() => {
             return true;
         })
         .catch(() => {
             return false;
-        });
+        }));
 };
 
 export const transferOwner = async (houseId: number, userName: string): Promise<Boolean> => {
-    return runQueryGetOne(`UPDATE dbo.houses
-        SET admin_name = \'${userName}\'
-        WHERE id = ${houseId}`)
+    const connection = await getConnection();
+    const request = new sql.Request(connection);
+    request.input('houseId', sql.Int, houseId);
+    request.input('userName', sql.VarChar, userName);
+    return (request.query(`UPDATE dbo.houses
+        SET admin_name = @userName
+        WHERE id = @houseId`)
         .then(() => {
             return true;
         })
         .catch(() => {
             return false;
-        });
+        }));
 };
