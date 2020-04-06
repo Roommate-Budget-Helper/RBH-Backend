@@ -13,6 +13,8 @@ export class InvitationApi extends ApiClient {
         this.httpClient.request<Boolean>('delete', `/api/invitation/decline?id=${invitationId}`);
 
     public getAllUsername = async () => this.httpClient.request<string[]>('get', '/api/invitation/allusers');
+    public checkInvitation = async (userName: string, houseId: numId) =>
+    this.httpClient.request<Boolean>('get', `/api/invitation/checkinvitation/?userName=${userName}&houseId=${houseId}`);
 }
 
 export default (client: HttpClient) => new InvitationApi(client);

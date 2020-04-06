@@ -84,3 +84,13 @@ export const getAllUsers = async (): Promise<any[]> => {
     select distinct users.userName 
     from dbo.users`);
 };
+export const checkInvitation = async (userName: string, houseId: numId): Promise<Boolean> => {
+    return runQueryGetOne(`
+          SELECT id from dbo.invitations WHERE userName = \'${userName}\' and houseId = \'${houseId}\'`).then((result) => {
+        if (_.isEmpty(result)) {
+            return false;
+        } else {
+            return true;
+        }
+    });
+};

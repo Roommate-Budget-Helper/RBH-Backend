@@ -10,4 +10,5 @@ router.post('/', asyncMiddleware(controller.createInvitation));
 router.delete('/accept', asyncMiddleware(controller.acceptInvitation));
 router.delete('/decline', asyncMiddleware(controller.declineInvitation));
 router.get('/allusers', asyncMiddleware(controller.getAllUsers));
+router.get('/checkinvitation', asyncMiddleware(controller.checkInvitation));
 export default router;

@@ -27,3 +27,9 @@ export const getAllUsers: RequestHandler = async (req, res) => {
     });
     return res.send(result);
 };
+
+export const checkInvitation: RequestHandler = async (req, res) => {
+    const result = await Azure.invitation.checkInvitation(req.query.userName, req.query.houseId);
+    return res.send(result);
+};
+
