@@ -2,6 +2,7 @@ import { getConnection } from './azure';
 import * as _ from 'lodash';
 import { promises } from 'dns';
 import sql from 'mssql';
+import {deleteBill} from './bill'
 
 export const insertHomeInfo = async (fullname: string, adminname: string, adminid: numId): Promise<Record<string, numId>> => {
     const connection = await getConnection();
@@ -156,7 +157,32 @@ export const getUserbalanceByHome = async (username: string, homeId: string): Pr
 };
 
 export const deleteHome = async (houseId: number): Promise<Boolean> => {
+    console.info(houseId)
     const connection = await getConnection();
+    const request1 = new sql.Request(connection);
+    const request2 = new sql.Request(connection);
+    request1.input('houseId', sql.Int, houseId)
+    request2.input('houseId', sql.Int, houseId)
+
+    await request1.query(`SELECT * from dbo.bills where homeId=@houseId`).then(result => {
+        let bills = result.recordset
+        console.info(bills)
+        bills.forEach(bill=>{
+            deleteBill(bill.id)
+        })
+    })
+    await request2.query(`SELECT * from dbo.sharePlans where HouseId=@houseId`).then(result => {
+        let plans = result.recordset
+        console.info(plans)
+        plans.forEach(plan => {
+            const request3 = new sql.Request(connection);
+            request3.input('planId', sql.Int, plan.id)
+            request3.query(`DELETE FROM dbo.shareRatioId where sharePlansid = @planId`)
+        })
+    }).finally( ()=>
+        request2.query(`DELETE from dbo.sharePlans where HouseId=@houseId
+        DELETE from dbo.invitations where houseId = @houseId`)
+    )
     const request = new sql.Request(connection);
     request.input('houseId', sql.Int, houseId);
     return (request.query(`DELETE FROM dbo.houses WHERE id = @houseId`)

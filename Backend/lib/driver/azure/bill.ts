@@ -356,13 +356,13 @@ export const getRecurrent = async (result: IBillRecurrentReturnValue[]): Promise
         return Recurrentbills;
     }
     const connection = await getConnection();
-    const request = new sql.Request(connection);
     var promises = result.map((element) => {
         id.push(element.id);
         name.push(element.full_name);
-        request.input('elementId', sql.Int, element.id);
+        const request = new sql.Request(connection);
+        request.input('eleId', sql.Int, element.id);
         return request.query(`SELECT dbo.shareRatioId.userName, dbo.shareRatioId.ratio FROM dbo.shareRatioId
-                where dbo.shareRatioId.sharePlansid = @elementId`)
+                where dbo.shareRatioId.sharePlansid = @eleId`)
             .then((ratios) => {
                 if (!ratios) {
                     return Recurrentbills;
