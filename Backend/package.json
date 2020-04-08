@@ -7,7 +7,8 @@
         "tsc": "tsc",
         "dev": "ts-node-dev --respawn --transpileOnly app.ts",
         "prod": "tsc && supervisor ./build/app.js",
-        "test": "mocha -r ts-node/register tests/*.ts"
+        "test": "mocha -r ts-node/register tests/*.ts",
+        "start": "node app.ts"
     },
     "author": "",
     "license": "ISC",
