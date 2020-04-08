@@ -2,13 +2,18 @@
     "name": "rbh-backend",
     "version": "1.0.0",
     "description": "rbh",
-    "main": "index.js",
+    "main": "dist/app.js",
     "scripts": {
         "tsc": "tsc",
         "dev": "ts-node-dev --respawn --transpileOnly app.ts",
         "prod": "tsc && supervisor ./build/app.js",
         "test": "mocha -r ts-node/register tests/*.ts",
-        "start": "node app.ts"
+        "start": "node dist/app.js",
+        "build": "tsc",
+        "postinstall": "npm run build"
+    },
+    "engines": {
+        "node": "12.16.1"
     },
     "author": "",
     "license": "ISC",
