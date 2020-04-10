@@ -42,9 +42,7 @@
         "uuid": "^3.4.0"
     },
     "devDependencies": {
-        "@types/chai": "^4.2.10",
         "@types/lodash": "^4.14.149",
-        "@types/mocha": "^5.2.7",
         "babel-cli": "^6.26.0",
         "babel-preset-env": "^1.7.0",
         "chai": "^4.2.0",
