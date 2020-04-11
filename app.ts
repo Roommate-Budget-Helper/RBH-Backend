@@ -28,7 +28,7 @@ app.use('/api/invitation', Route.invitation);
 app.use('/api/bill', Route.bill);
 app.use('/api/history', Route.history);
 
-const port = 9527;
+const port = process.env.PORT || 9527;
 const server = new http.Server(app);
 
 server.listen(`${port}`, () => {

@@ -2,12 +2,17 @@
     "name": "rbh-backend",
     "version": "1.0.0",
     "description": "rbh",
-    "main": "index.js",
+    "main": "dist/app.js",
     "scripts": {
         "tsc": "tsc",
         "dev": "ts-node-dev --respawn --transpileOnly app.ts",
         "prod": "tsc && supervisor ./build/app.js",
-        "test": "mocha -r ts-node/register tests/*.ts"
+        "start": "node dist/app.js",
+        "build": "tsc",
+        "postinstall": "npm run build"
+    },
+    "engines": {
+        "node": "12.16.1"
     },
     "author": "",
     "license": "ISC",
@@ -37,9 +42,7 @@
         "uuid": "^3.4.0"
     },
     "devDependencies": {
-        "@types/chai": "^4.2.10",
         "@types/lodash": "^4.14.149",
-        "@types/mocha": "^5.2.7",
         "babel-cli": "^6.26.0",
         "babel-preset-env": "^1.7.0",
         "chai": "^4.2.0",
