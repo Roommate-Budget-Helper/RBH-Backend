@@ -2,7 +2,7 @@ import { getConnection } from './azure';
 import * as _ from 'lodash';
 import { promises } from 'dns';
 import sql from 'mssql';
-import {deleteBill} from './bill'
+import { deleteBill } from './bill';
 
 export const insertHomeInfo = async (fullname: string, adminname: string, adminid: numId): Promise<Record<string, numId>> => {
     const connection = await getConnection();
@@ -10,8 +10,9 @@ export const insertHomeInfo = async (fullname: string, adminname: string, admini
     request.input('fullname', sql.VarChar, fullname);
     request.input('adminname', sql.VarChar, adminname);
     request.input('adminid', sql.Int, adminid);
-    return (await request.query(
-        `INSERT INTO dbo.houses(full_name, admin_name, admin_id) VALUES (@fullname, @adminname, @adminid);
+    return (
+        await request.query(
+            `INSERT INTO dbo.houses(full_name, admin_name, admin_id) VALUES (@fullname, @adminname, @adminid);
         declare @tempHouseId int;
         select @tempHouseId = MAX(dbo.houses.id)
         from dbo.houses
@@ -20,14 +21,16 @@ export const insertHomeInfo = async (fullname: string, adminname: string, admini
         INSERT INTO dbo.User2Houses(HouseId,userId) VALUES (@tempHouseId, @adminid);
         SELECT id FROM dbo.houses where id= (SELECT max(id) FROM dbo.houses);
         `
-    )).recordset[0];
+        )
+    ).recordset[0];
 };
 
 export const getHomeInfo = async (userId: number): Promise<IUser2Home[]> => {
     const connection = await getConnection();
     const request = new sql.Request(connection);
     request.input('userId', sql.Int, userId);
-    return (await request.query(`declare @Max as int
+    return (
+        await request.query(`declare @Max as int
     declare @Current as int
     declare @tempHouseId as int
     declare @res as varchar(511)
@@ -108,18 +111,21 @@ export const getHomeInfo = async (userId: number): Promise<IUser2Home[]> => {
         select @Current = @Current+1;
     
       End
-      select * from #temp_HouseInfo_Users`)).recordset;
+      select * from #temp_HouseInfo_Users`)
+    ).recordset;
 };
 
 export const getHomeDetail = async (houseId: number): Promise<IUserInfo[]> => {
     const connection = await getConnection();
     const request = new sql.Request(connection);
     request.input('houseId', sql.Int, houseId);
-    return (await request.query(`select dbo.users.*
+    return (
+        await request.query(`select dbo.users.*
     from dbo.User2Houses
     inner join dbo.users
     on dbo.User2Houses.userId = dbo.users.id
-    where HouseId = @houseId`)).recordset;
+    where HouseId = @houseId`)
+    ).recordset;
 };
 
 export const removeRoommate = async (userName: string, houseId: number): Promise<Boolean> => {
@@ -127,10 +133,12 @@ export const removeRoommate = async (userName: string, houseId: number): Promise
     const request = new sql.Request(connection);
     request.input('userName', sql.VarChar, userName);
     request.input('houseId', sql.Int, houseId);
-    return (await request.query(`DELETE dbo.User2Houses  FROM dbo.User2Houses 
+    return (
+        await request.query(`DELETE dbo.User2Houses  FROM dbo.User2Houses 
     inner join dbo.users 
     on dbo.User2Houses.userId=dbo.users.id
-    WHERE dbo.users.userName=@userName and dbo.User2Houses.HouseId=@houseId`)).recordset as any;
+    WHERE dbo.users.userName=@userName and dbo.User2Houses.HouseId=@houseId`)
+    ).recordset as any;
 };
 
 export const getUserbalanceByHome = async (username: string, homeId: string): Promise<IUserBalanceResponse> => {
@@ -138,7 +146,8 @@ export const getUserbalanceByHome = async (username: string, homeId: string): Pr
     const request = new sql.Request(connection);
     request.input('username', sql.VarChar, username);
     request.input('homeId', sql.VarChar, homeId);
-    return (await request.query(`
+    return (
+        await request.query(`
             Declare @userId int
 
             select @userId = id
@@ -153,45 +162,49 @@ export const getUserbalanceByHome = async (username: string, homeId: string): Pr
             where bills.homeId =  @homeId
             and userId = @userId 
             and proofFlag = 0
-            and ownerId != @userId`)).recordset[0];
+            and ownerId != @userId`)
+    ).recordset[0];
 };
 
 export const deleteHome = async (houseId: number): Promise<Boolean> => {
-    console.info(houseId)
     const connection = await getConnection();
     const request1 = new sql.Request(connection);
     const request2 = new sql.Request(connection);
-    request1.input('houseId', sql.Int, houseId)
-    request2.input('houseId', sql.Int, houseId)
+    request1.input('houseId', sql.Int, houseId);
+    request2.input('houseId', sql.Int, houseId);
 
-    await request1.query(`SELECT * from dbo.bills where homeId=@houseId`).then(result => {
-        let bills = result.recordset
-        console.info(bills)
-        bills.forEach(bill=>{
-            deleteBill(bill.id)
+    await request1.query(`SELECT * from dbo.bills where homeId=@houseId`).then((result) => {
+        let bills = result.recordset;
+
+        bills.forEach((bill) => {
+            deleteBill(bill.id);
+        });
+    });
+    await request2
+        .query(`SELECT * from dbo.sharePlans where HouseId=@houseId`)
+        .then((result) => {
+            let plans = result.recordset;
+
+            plans.forEach((plan) => {
+                const request3 = new sql.Request(connection);
+                request3.input('planId', sql.Int, plan.id);
+                request3.query(`DELETE FROM dbo.shareRatioId where sharePlansid = @planId`);
+            });
         })
-    })
-    await request2.query(`SELECT * from dbo.sharePlans where HouseId=@houseId`).then(result => {
-        let plans = result.recordset
-        console.info(plans)
-        plans.forEach(plan => {
-            const request3 = new sql.Request(connection);
-            request3.input('planId', sql.Int, plan.id)
-            request3.query(`DELETE FROM dbo.shareRatioId where sharePlansid = @planId`)
-        })
-    }).finally( ()=>
-        request2.query(`DELETE from dbo.sharePlans where HouseId=@houseId
+        .finally(() =>
+            request2.query(`DELETE from dbo.sharePlans where HouseId=@houseId
         DELETE from dbo.invitations where houseId = @houseId`)
-    )
+        );
     const request = new sql.Request(connection);
     request.input('houseId', sql.Int, houseId);
-    return (request.query(`DELETE FROM dbo.houses WHERE id = @houseId`)
+    return request
+        .query(`DELETE FROM dbo.houses WHERE id = @houseId`)
         .then(() => {
             return true;
         })
         .catch(() => {
             return false;
-        }));
+        });
 };
 
 export const transferOwner = async (houseId: number, userName: string): Promise<Boolean> => {
@@ -199,13 +212,16 @@ export const transferOwner = async (houseId: number, userName: string): Promise<
     const request = new sql.Request(connection);
     request.input('houseId', sql.Int, houseId);
     request.input('userName', sql.VarChar, userName);
-    return (request.query(`UPDATE dbo.houses
-        SET admin_name = @userName
-        WHERE id = @houseId`)
+    return request
+        .query(
+            `UPDATE dbo.houses
+             SET admin_name = @userName
+             WHERE id = @houseId`
+        )
         .then(() => {
             return true;
         })
         .catch(() => {
             return false;
-        }));
+        });
 };

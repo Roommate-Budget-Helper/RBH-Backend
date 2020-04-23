@@ -1,4 +1,4 @@
-import { runQuery, runQueryGetOne, getConnection} from './azure';
+import { runQuery, runQueryGetOne, getConnection } from './azure';
 import * as _ from 'lodash';
 import { is } from 'bluebird';
 import sql from 'mssql';
@@ -16,9 +16,8 @@ export const getHistory = async (userId: numId): Promise<IHistoryResponse[]> => 
             request.input('billId', sql.Int, bills[i].billId);
             await request.query('SELECT ownerId from dbo.bills where id = @billId').then(async (ownerId) => {
                 const isOwner = (ownerId.recordset[0] as IBillOwnerIdResponse).ownerId == userId;
-                // console.info(bills)
-                await request.query('SELECT userId, amount, proofFlag from dbo.users2bills where billId = @billId').then(async (ids)=> {
 
+                await request.query('SELECT userId, amount, proofFlag from dbo.users2bills where billId = @billId').then(async (ids) => {
                     const users = ids.recordset as IBillUserIdResponse[];
 
                     let haveProof = false;
@@ -28,15 +27,14 @@ export const getHistory = async (userId: numId): Promise<IHistoryResponse[]> => 
                             haveProof = users[j].proofFlag;
                         }
                     }
-                    // console.info(users)
 
                     for (let j = 0; j < users.length; j++) {
                         request = new sql.Request(connection);
                         request.input('userId', sql.Int, users[j].userId);
-                        const user: IBillUsernameResponse = await (await request.query('SELECT userName from dbo.users where id = @userId')).recordset[0];
+                        const user: IBillUsernameResponse = await (await request.query('SELECT userName from dbo.users where id = @userId'))
+                            .recordset[0];
                         const userName = user.userName;
                         if (users[j].userId != userId && users[j].userId == (ownerId.recordset[0] as IBillOwnerIdResponse).ownerId) {
-                            // console.info(userName)
                             if (map.has(userName)) {
                                 const before = map.get(userName).balance;
                                 const count = map.get(userName).billCount;
@@ -71,15 +69,18 @@ export const getHistory = async (userId: numId): Promise<IHistoryResponse[]> => 
                         }
                     }
                 });
-                // console.info(isOwner)
             });
         }
-        console.info(map);
     });
     for (const name of map.keys()) {
         const value = map.get(name);
-        history.push({userName: name, balance: value.balance, billCount: value.billCount, homeCount: value.homeCount} as IHistoryResponse);
+        history.push({
+            userName: name,
+            balance: value.balance,
+            billCount: value.billCount,
+            homeCount: value.homeCount
+        } as IHistoryResponse);
     }
-    console.info('after', map);
+
     return history;
 };
