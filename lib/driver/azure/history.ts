@@ -19,12 +19,14 @@ export const getHistory = async (userId: numId): Promise<IHistoryResponse[]> => 
 
                 await request.query('SELECT userId, amount, proofFlag from dbo.users2bills where billId = @billId').then(async (ids) => {
                     const users = ids.recordset as IBillUserIdResponse[];
-
+                    console.info("!!!", users)
                     let haveProof = false;
+                    let am = 0;
 
                     for (let j = 0; j < users.length; j++) {
                         if (users[j].userId == userId) {
                             haveProof = users[j].proofFlag;
+                            am = users[j].amount
                         }
                     }
 
@@ -41,13 +43,13 @@ export const getHistory = async (userId: numId): Promise<IHistoryResponse[]> => 
                                 if (haveProof) {
                                     map.set(userName, { balance: before, billCount: count + 1, homeCount: 0 });
                                 } else {
-                                    map.set(userName, { balance: before - users[j].amount, billCount: count + 1, homeCount: 0 });
+                                    map.set(userName, { balance: before - am, billCount: count + 1, homeCount: 0 });
                                 }
                             } else {
                                 if (haveProof) {
                                     map.set(userName, { balance: 0, billCount: 1, homeCount: 0 });
                                 } else {
-                                    map.set(userName, { balance: 0 - users[j].amount, billCount: 1, homeCount: 0 });
+                                    map.set(userName, { balance: 0 - am, billCount: 1, homeCount: 0 });
                                 }
                             }
                         } else if (isOwner && users[j].userId != userId) {
