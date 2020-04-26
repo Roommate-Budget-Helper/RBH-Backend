@@ -1,11 +1,10 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-import { App } from '../app';
 
 chai.use(chaiHttp);
 chai.should();
 
-describe('Test Invitation Get All users', () => {
+describe('Test Invitation - Get All users', () => {
     const host = 'https://roommate-budget-helper-api.herokuapp.com';
     const path = '/api/invitation/allusers';
 
@@ -31,7 +30,7 @@ describe('Test Invitation Get All users', () => {
     });
 });
 
-describe('Test Invitation Get All users Fail', () => {
+describe('Test Invitation - Get All users Fail', () => {
     const host = 'https://roommate-budget-helper-api.herokuapp.com';
     const path = '/api/session/allusers';
 
@@ -40,7 +39,49 @@ describe('Test Invitation Get All users Fail', () => {
         chai.request(host)
             .get(path)
             .set('content-type', 'application/json')
-            .query()
+            .query({})
+            //@ts-ignore
+            .end((error, response, body) => {
+                if (error) {
+                    done(error);
+                } else {
+                    done();
+                }
+            });
+    });
+});
+
+describe('Test Invitation - Get Invitation', () => {
+    const host = 'https://roommate-budget-helper-api.herokuapp.com';
+    const path = '/api/invitation';
+
+    it('should send parameters to : /api/invitation GET', (done) => {
+        //@ts-ignore
+        chai.request(host)
+            .get(path)
+            .set('content-type', 'application/json')
+            .query({ userId: 1 })
+            //@ts-ignore
+            .end((error, response, body) => {
+                if (error) {
+                    done(error);
+                } else {
+                    done();
+                }
+            });
+    });
+});
+
+describe('Test Invitation - Check Invitation', () => {
+    const host = 'https://roommate-budget-helper-api.herokuapp.com';
+    const path = '/api/invitation';
+
+    it('should send parameters to : /api/checkinvitation GET', (done) => {
+        //@ts-ignore
+        chai.request(host)
+            .get(path)
+            .set('content-type', 'application/json')
+            .query({ userName: 'huangj3', houseId: 1 })
             //@ts-ignore
             .end((error, response, body) => {
                 if (error) {
