@@ -11,9 +11,10 @@ export const getUserInfo = async (username: string, password: string): Promise<I
 };
 
 export const insertUserInfo = async (username: string, password: string, email: string): Promise<IAuthResponse> => {
-    const getResult = await getUserInfo(username, password);
+    const connection = await getConnection()
+    const request1 = new sql.Request(connection)
+    const getResult = (await request1.query(`SELECT * FROM dbo.users WHERE userName= @username`)).recordset[0] as any;
     if (_.isEmpty(getResult)) {
-        const connection = await getConnection()
         const request = new sql.Request(connection)
         request.input('username', sql.VarChar, username);
         request.input('password', sql.VarChar, password);
