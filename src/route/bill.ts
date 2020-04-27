@@ -16,7 +16,7 @@ router.post('/proof', asyncMiddleware(controller.uploadProofById));
 router.post('/', asyncMiddleware(controller.createBill));
 router.delete('', asyncMiddleware(controller.deleteBill));
 router.put('', asyncMiddleware(controller.markAsResolved));
-router.post('/recurrentbill', asyncMiddleware(controller.updateRecurrent))
+router.post('/recurrentbill', asyncMiddleware(controller.updateRecurrent));
 router.get('/history', asyncMiddleware(controller.getBillHistoryById));
 router.post('/history', asyncMiddleware(controller.createBillHistory));
 

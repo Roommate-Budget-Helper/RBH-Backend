@@ -33,7 +33,7 @@ export const createUser2Bill = async (
             request1.input('proportion', sql.Float, proportion[i])
             request1.input('amount', sql.Float, amount[i])
 
-            console.info('userId', userId, roommates[i], roommates[i].length, result);
+           
             await request1.query(`INSERT INTO dbo.users2bills (billId, userId, proportion, amount, proofFlag, isApproved)
             VALUES (@billId, @userId, @proportion, @amount, 0, 0)
             SELECT id FROM dbo.bills where id= (SELECT max(id) FROM dbo.bills)`);
@@ -220,7 +220,7 @@ export const getBillById = async (billId: numId): Promise<IBillDetail[]> => {
 };
 
 export const deleteBill = async (billid: numId): Promise<Boolean> => {
-    // console.log(billid);
+  
     const connection = await getConnection()
     const request = new sql.Request(connection)
     request.input('billId', sql.Int, billid)
@@ -301,7 +301,7 @@ export const getSharePlans = async (result: IBillSharePlanReturnValue[]): Promis
 
 export const editBillById = async (billDetails: IBillDetail[]): Promise<Boolean> => {
     let date: Date = new Date()
-    console.info(date.toISOString())
+    
     const connection = await getConnection()
     
     billDetails.map((billDetail: IBillDetail) => {
@@ -399,7 +399,7 @@ export const getRecurrent = async (result: IBillRecurrentReturnValue[]): Promise
 
 export const updateRecurrent = async (planId: numId, newDate: Date): Promise<Boolean> => {
     const connection = await getConnection();
-    console.info(newDate, planId)
+ 
     const request = new sql.Request(connection);
     request.input('planId', sql.Int, planId);
     request.input('newDate', sql.Date, newDate);

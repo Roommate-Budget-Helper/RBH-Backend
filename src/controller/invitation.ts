@@ -32,4 +32,3 @@ export const checkInvitation: RequestHandler = async (req, res) => {
     const result = await Azure.invitation.checkInvitation(req.query.userName, req.query.houseId);
     return res.send(result);
 };
-
