@@ -312,7 +312,7 @@ export const editBillById = async (billDetails: IBillDetail[]): Promise<Boolean>
     request.input('created_at', sql.Date, date.toISOString())
     request.input('id', sql.Int, billDetail.billId)
     request.input('proportion', sql.Float, billDetail.proportion)
-    request.input('amoun', sql.Int, billDetail.totalAmount*billDetail.proportion)
+    request.input('amoun', sql.Int, parseFloat((billDetail.totalAmount*billDetail.proportion/100).toPrecision(4)))
     request.input('userId', sql.Int, billDetail.userId)
 
         return request.query(`
