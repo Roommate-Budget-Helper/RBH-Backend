@@ -25,40 +25,38 @@ export const createBill: RequestHandler = async (req, res) => {
 };
 
 export const getBillByHome: RequestHandler = async (req, res) => {
-    const result: IBill[] = await Azure.bill.getBillByHome(req.query.homeId);
+    const result: IBill[] = await Azure.bill.getBillByHome(req.query.homeId as any);
     return res.send(result);
 };
 
 export const getBillByUser: RequestHandler = async (req, res) => {
-    const result: IBill[] = await Azure.bill.getBillByUser(req.query.userId);
+    const result: IBill[] = await Azure.bill.getBillByUser(req.query.userId as any);
     return res.send(result);
 };
 
 export const getBillById: RequestHandler = async (req, res) => {
-    const result: IBillDetail[] = await Azure.bill.getBillById(req.query.billId);
-
+    const result: IBillDetail[] = await Azure.bill.getBillById(req.query.billId as any);
     return res.send(result);
 };
 
 export const deleteBill: RequestHandler = async (req, res) => {
-    const result: Boolean = await Azure.bill.deleteBill(req.query.billId);
+    const result: Boolean = await Azure.bill.deleteBill(req.query.billId as any);
     return res.send(result);
 };
 
 export const markAsResolved: RequestHandler = async (req, res) => {
-    const result: Boolean = await Azure.bill.markAsResolved(req.query.billId);
+    const result: Boolean = await Azure.bill.markAsResolved(req.query.billId as any);
     return res.send(result);
 };
 
 export const getSharePlans: RequestHandler = async (req, res) => {
-    const result: IBillSharePlan[] = await Azure.bill.getSharePlanValue(req.query.houseId);
+    const result: IBillSharePlan[] = await Azure.bill.getSharePlanValue(req.query.houseId as any);
 
     return res.send(result);
 };
 
 export const getRecurrentBill: RequestHandler = async (req, res) => {
-    const result: IBillRecurrent[] = await Azure.bill.getRecurrentBill(req.query.houseId);
-
+    const result: IBillRecurrent[] = await Azure.bill.getRecurrentBill(req.query.houseId as any);
     return res.send(result);
 };
 
@@ -73,8 +71,7 @@ export const updateRecurrent: RequestHandler = async (req, res) => {
 };
 
 export const getProofById: RequestHandler = async (req, res) => {
-    const result: FileList = await Azure.bill.getProofById(req.query.id);
-
+    const result: FileList = await Azure.bill.getProofById(req.query.id as any);
     return res.send(result);
 };
 
@@ -84,19 +81,20 @@ export const uploadProofById: RequestHandler = async (req, res) => {
 };
 
 export const getBillHistoryById: RequestHandler = async (req, res) => {
-    const result: IBillHistory[] = await Azure.bill.getBillHistoryById(req.query.billId);
+    const result: IBillHistory[] = await Azure.bill.getBillHistoryById(req.query.billId as any);
     return res.send(result);
 };
 
 export const createBillHistory: RequestHandler = async (req, res) => {
-    const result: Boolean = await Azure.bill.createBillHistory(
-        {ownerId: req.body.ownerId,
+    const result: Boolean = await Azure.bill.createBillHistory({
+        ownerId: req.body.ownerId,
         homeId: req.body.homeId,
         totalAmount: req.body.totalAmount,
         currentID: req.body.currentID,
         billName: req.body.billName,
         descri: req.body.descri,
         created_at: req.body.created_at,
-        created_by: req.body.created_by});
+        created_by: req.body.created_by
+    });
     return res.send(result);
 };
