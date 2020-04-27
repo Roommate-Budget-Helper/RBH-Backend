@@ -80,3 +80,28 @@ describe('Test Get Home Detail by houseId', () => {
             });
     });
 });
+
+describe('Test Fail Get Home Detail by houseId', () => {
+    const host = 'https://roommate-budget-helper-api.herokuapp.com';
+    const path = '/api/home/detail';
+
+    it('should send parameters to : /api/home/detail GET', (done) => {
+        //@ts-ignore
+        chai.request(host)
+            .get(path)
+            .set('content-type', 'application/json')
+            .query({ houseId: -1 })
+            //@ts-ignore
+            .end((error, response, body) => {
+                if (error) {
+                    done(error);
+                } else {
+                    if (response.body.length <= 1) {
+                        done();
+                    } else {
+                        done('233333');
+                    }
+                }
+            });
+    });
+});

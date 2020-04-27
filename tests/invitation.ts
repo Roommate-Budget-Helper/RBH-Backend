@@ -92,3 +92,24 @@ describe('Test Invitation - Check Invitation', () => {
             });
     });
 });
+
+describe('Test Invitation Fail - Get Invitation', () => {
+    const host = 'https://roommate-budget-helper-api.herokuapp.com';
+    const path = '/api/invitation';
+
+    it('should send parameters to : /api/invitation GET', (done) => {
+        //@ts-ignore
+        chai.request(host)
+            .get(path)
+            .set('content-type', 'application/json')
+            .query({ userId: -1 })
+            //@ts-ignore
+            .end((error, response, body) => {
+                if (error) {
+                    done(error);
+                } else {
+                    done();
+                }
+            });
+    });
+});
